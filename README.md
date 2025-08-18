@@ -15,6 +15,7 @@ AI destekli PDF tabanlı mülakat soru üretim uygulaması. PDF dökümanların�
 ## 🚀 Hızlı Başlangıç
 
 ### 1. Kurulum
+
 ```bash
 git clone <repo-url>
 cd interview-question-creator
@@ -22,12 +23,14 @@ npm install
 ```
 
 ### 2. Environment Setup
+
 ```bash
 cp .env.example .env.local
 # .env.local dosyasını düzenleyin:
 ```
 
 **Gerekli Environment Variables:**
+
 ```env
 MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/db
 GOOGLE_API_KEY=AIzaSyXXXXXXXXXXXXXXXXXXXXXXXX
@@ -35,6 +38,7 @@ JWT_SECRET=your_32_char_plus_random_string_here
 ```
 
 ### 3. Çalıştırma
+
 ```bash
 npm run dev
 ```
@@ -57,7 +61,7 @@ Kapsamlı kurulum, kullanım ve geliştirme kılavuzu için [README-DETAILED.md]
 ## 🎮 Kullanım
 
 1. **Register/Login** - Hesap oluşturun
-2. **PDF Upload** - Dökümanınızı yükleyin  
+2. **PDF Upload** - Dökümanınızı yükleyin
 3. **Generate** - AI ile sorular oluşturun
 4. **Review** - Soru-cevap setlerini inceleyin
 5. **Export** - JSON/CSV formatında indirin
@@ -93,6 +97,7 @@ GET  /api/health          # Sistem durumu
 ## 📊 Durum
 
 **✅ Production Ready**
+
 - ✅ Authentication çalışıyor
 - ✅ PDF upload fonksiyonel
 - ✅ AI soru üretimi aktif

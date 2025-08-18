@@ -6,15 +6,15 @@ import QuestionSet from "@/models/QuestionSet";
 export async function DELETE() {
   try {
     await connectToDatabase();
-    
+
     // Delete all documents and question sets (for development only)
     await Document.deleteMany({});
     await QuestionSet.deleteMany({});
-    
-    return NextResponse.json({ 
+
+    return NextResponse.json({
       message: "Database cleaned successfully",
       deletedDocuments: true,
-      deletedQuestionSets: true 
+      deletedQuestionSets: true,
     });
   } catch (error) {
     console.error("Database cleanup error:", error);

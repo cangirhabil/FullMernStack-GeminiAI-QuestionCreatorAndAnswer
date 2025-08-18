@@ -6,10 +6,8 @@ export async function GET() {
     const conn = await connectToDatabase();
     return NextResponse.json({ status: "ok", db: conn.connection.name });
   } catch (err: unknown) {
-    const message = err instanceof Error ? err.message : 'Database connection failed';
-    return NextResponse.json(
-      { status: "error", message },
-      { status: 500 }
-    );
+    const message =
+      err instanceof Error ? err.message : "Database connection failed";
+    return NextResponse.json({ status: "error", message }, { status: 500 });
   }
 }

@@ -45,7 +45,7 @@ export async function POST(request: NextRequest) {
       id: document._id,
       filename: document.filename,
       uploadPath: document.uploadPath,
-      originalName: document.originalName
+      originalName: document.originalName,
     });
 
     // Check if file exists before trying to read
