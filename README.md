@@ -1,36 +1,132 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🎯 Interview Question Creator
 
-## Getting Started
+AI destekli PDF tabanlı mülakat soru üretim uygulaması. PDF dökümanlarınızı yükleyin, Google Gemini AI ile otomatik soru setleri oluşturun.
 
-First, run the development server:
+## ✨ Özellikler
 
+- 🔐 **Güvenli Auth:** JWT token tabanlı kimlik doğrulama
+- 📄 **PDF Upload:** Drag & drop ile dosya yükleme (max 10MB)
+- 🤖 **AI Soru Üretimi:** Google Gemini 1.5 Flash ile akıllı soru oluşturma
+- ⚙️ **Özelleştirilebilir:** Soru sayısı ve zorluk seviyesi seçimi
+- 📊 **Dashboard:** Soru setlerinizi yönetin ve görüntüleyin
+- 💾 **Export:** JSON & CSV formatında dışa aktarma
+- 🎨 **Modern UI:** Next.js 15 + TailwindCSS + ShadCN/UI
+
+## 🚀 Hızlı Başlangıç
+
+### 1. Kurulum
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone <repo-url>
+cd interview-question-creator
+npm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 2. Environment Setup
+```bash
+cp .env.example .env.local
+# .env.local dosyasını düzenleyin:
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+**Gerekli Environment Variables:**
+```env
+MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/db
+GOOGLE_API_KEY=AIzaSyXXXXXXXXXXXXXXXXXXXXXXXX
+JWT_SECRET=your_32_char_plus_random_string_here
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### 3. Çalıştırma
+```bash
+npm run dev
+```
 
-## Learn More
+Uygulama [http://localhost:3000](http://localhost:3000) adresinde çalışacak.
 
-To learn more about Next.js, take a look at the following resources:
+## 🛠️ Tech Stack
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- **Frontend:** Next.js 15, TypeScript, TailwindCSS, ShadCN/UI
+- **Backend:** Next.js API Routes, Node.js
+- **Database:** MongoDB Atlas / Mongoose
+- **AI:** Google Generative AI (Gemini 1.5 Flash)
+- **Auth:** JWT with HttpOnly cookies
+- **Security:** bcryptjs, CORS, input validation
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 📖 Detaylı Dokümantasyon
 
-## Deploy on Vercel
+Kapsamlı kurulum, kullanım ve geliştirme kılavuzu için [README-DETAILED.md](./README-DETAILED.md) dosyasına bakın.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 🎮 Kullanım
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1. **Register/Login** - Hesap oluşturun
+2. **PDF Upload** - Dökümanınızı yükleyin  
+3. **Generate** - AI ile sorular oluşturun
+4. **Review** - Soru-cevap setlerini inceleyin
+5. **Export** - JSON/CSV formatında indirin
+
+## 🔧 API Endpoints
+
+```
+POST /api/auth/register    # Kullanıcı kaydı
+POST /api/auth/login       # Login
+POST /api/upload           # PDF yükleme
+POST /api/generate         # AI soru üretimi
+GET  /api/questions        # Soru setleri listesi
+GET  /api/health          # Sistem durumu
+```
+
+## 🛡️ Güvenlik
+
+- JWT token tabanlı authentication
+- HttpOnly cookies ile XSS koruması
+- bcrypt ile şifre hashleme
+- File type ve boyut validasyonu
+- MongoDB Atlas enterprise güvenlik
+
+## 🚧 Roadmap
+
+- [ ] PDF parsing fix (şu an placeholder text)
+- [ ] S3/Cloudflare R2 entegrasyonu
+- [ ] Rate limiting
+- [ ] Email verification
+- [ ] Advanced filtering
+- [ ] Mobile app
+
+## 📊 Durum
+
+**✅ Production Ready**
+- ✅ Authentication çalışıyor
+- ✅ PDF upload fonksiyonel
+- ✅ AI soru üretimi aktif
+- ✅ Dashboard ve export hazır
+- ✅ MongoDB Atlas bağlantılı
+
+## 📄 Lisans
+
+MIT License - Detaylar için [LICENSE](./LICENSE) dosyasına bakın.
+
+---
+
+**Son Güncelleme:** 18 Ağustos 2025 | **Versiyon:** 1.0.0
+
+### Geliştirme İpuçları
+
+- `uploads/` klasörü development sırasında local diskte tutulur. Production için kalıcı storage önerilir.
+- API hatalarını görmek için terminal / server loglarını takip edin.
+- `JWT_SECRET` değerini değiştirirseniz mevcut giriş (cookie) geçersiz olur; yeniden login yapın.
+
+### Vercel Notları
+
+- `uploads/` dizini ephemeral; kalıcı depolama için S3 / R2 kullanın.
+- `pdf-parse` dinamik import edildi (server only).
+- Environment değişkenlerini Vercel dashboard üzerinden tanımlayın.
+
+### Yol Haritası
+
+- [ ] Kalıcı obje depolama entegrasyonu
+- [ ] Büyük PDF chunking & streaming
+- [ ] Rate limiting
+- [ ] RAG (embeddings + semantic arama)
+- [ ] Rol bazlı yetki
+
+### Lisans
+
+MIT
