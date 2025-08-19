@@ -1,12 +1,13 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { useLang } from "@/components/providers/lang-provider";
+import { useAuth } from "@/components/providers/auth-provider";
 
 interface QuestionSetSummary {
   _id: string;
@@ -21,23 +22,52 @@ export function QuestionSetList() {
   const [questionSets, setQuestionSets] = useState<QuestionSetSummary[]>([]);
   const router = useRouter();
   const { t, locale } = useLang();
+  const { user, loading: authLoading } = useAuth();
 
-  const fetchQuestionSets = async () => {
+  const fetchQuestionSets = useCallback(async () => {
+    if (!user) return; // safety guard
     setLoading(true);
     try {
-      const res = await fetch("/api/questions");
+      const res = await fetch("/api/questions", { cache: "no-store" });
+      // If unauthorized (some rare race), retry once after a short delay
+      if (res.status === 401) {
+        setTimeout(() => {
+          fetch("/api/questions", { cache: "no-store" })
+            .then((r) =>
+              r.json().then((d) => ({ ok: r.ok, status: r.status, data: d }))
+            )
+            .then(({ ok, data }) => {
+              if (ok) setQuestionSets(data.questionSets || []);
+            })
+            .catch(() => {});
+        }, 350);
+      }
       const data = await res.json();
       if (res.ok) {
         setQuestionSets(data.questionSets || []);
-      } else {
+      } else if (res.status !== 401) {
         toast.error(t("ql_fetchFailed"));
+      }
+      // Light heuristic: if empty, try a silent refetch once (helps with eventual consistency right after login)
+      if (res.ok && (!data.questionSets || data.questionSets.length === 0)) {
+        setTimeout(async () => {
+          try {
+            const r2 = await fetch("/api/questions", { cache: "no-store" });
+            if (r2.ok) {
+              const d2 = await r2.json();
+              if (d2.questionSets?.length) setQuestionSets(d2.questionSets);
+            }
+          } catch {
+            /* ignore silent retry */
+          }
+        }, 250);
       }
     } catch {
       toast.error(t("ql_fetchFailed"));
     } finally {
       setLoading(false);
     }
-  };
+  }, [t, user]);
 
   const deleteQuestionSet = async (id: string) => {
     if (!confirm(t("ql_deleteConfirm"))) return;
@@ -53,14 +83,25 @@ export function QuestionSetList() {
     }
   };
 
+  // Fetch only after auth fully resolved and user present
   useEffect(() => {
-    fetchQuestionSets();
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+    if (!authLoading && user) {
+      fetchQuestionSets();
+    }
+  }, [authLoading, user, fetchQuestionSets]);
 
   return (
     <Card>
-      <CardHeader>
+      <CardHeader className="flex flex-row items-center justify-between">
         <CardTitle>{t("ql_recent")}</CardTitle>
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => fetchQuestionSets()}
+          disabled={loading || authLoading || !user}
+        >
+          {t("refresh") || "↻"}
+        </Button>
       </CardHeader>
       <CardContent className="space-y-4">
         {loading && <Spinner />}

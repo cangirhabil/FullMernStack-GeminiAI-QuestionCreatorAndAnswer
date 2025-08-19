@@ -46,5 +46,6 @@ export const tr = {
   ql_fetchFailed: "Soru setleri alınamadı",
   ql_seeAll: "Tümünü Gör",
   ql_questionsSuffix: "soru",
+  refresh: "Yenile",
 };
 export type TrDict = typeof tr;

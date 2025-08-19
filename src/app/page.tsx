@@ -48,12 +48,7 @@ export default function Home() {
           <UploadAndGenerate />
           <QuestionSetList />
         </div>
-        <aside className="space-y-4">
-          <div className="p-4 rounded border text-sm text-muted-foreground">
-            <p className="font-medium mb-1">{t("noteTitle")}</p>
-            <p>{t("noteBody")}</p>
-          </div>
-        </aside>
+       
       </main>
     </div>
   );

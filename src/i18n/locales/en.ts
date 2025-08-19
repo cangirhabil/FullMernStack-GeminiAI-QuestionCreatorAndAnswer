@@ -46,5 +46,6 @@ export const en = {
   ql_fetchFailed: "Failed to fetch question sets",
   ql_seeAll: "See All",
   ql_questionsSuffix: "questions",
+  refresh: "Refresh",
 };
 export type EnDict = typeof en;

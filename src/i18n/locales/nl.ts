@@ -46,5 +46,6 @@ export const nl = {
   ql_fetchFailed: "Vragensets ophalen mislukt",
   ql_seeAll: "Alles Zien",
   ql_questionsSuffix: "vragen",
+  refresh: "Vernieuwen",
 };
 export type NlDict = typeof nl;
