@@ -132,8 +132,8 @@ export function UploadAndGenerate() {
             ) : (
               <div className="text-center">
                 <Upload className="w-8 h-8 text-gray-400 mx-auto mb-2" />
-                <p className="text-sm font-medium text-gray-700">Click to upload PDF</p>
-                <p className="text-xs text-gray-500">or drag and drop your file here</p>
+                <p className="text-sm font-medium text-gray-700">{t("ug_clickToUpload")}</p>
+                <p className="text-xs text-gray-500">{t("ug_orDragDrop")}</p>
               </div>
             )}
           </label>
@@ -148,35 +148,35 @@ export function UploadAndGenerate() {
           }`}>
             <Settings className="w-4 h-4" />
           </div>
-          <h3 className="font-semibold text-gray-900">Configure Generation</h3>
+          <h3 className="font-semibold text-gray-900">{t("ug_configureTitle")}</h3>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-2">
-            <Label className="text-sm font-medium text-gray-700">Difficulty Level</Label>
+            <Label className="text-sm font-medium text-gray-700">{t("ug_difficultyLevel")}</Label>
             <Select value={difficulty} onValueChange={setDifficulty}>
               <SelectTrigger className="h-11 rounded-xl border-gray-200">
-                <SelectValue placeholder="Select difficulty" />
+                <SelectValue placeholder={t("ug_selectDifficulty")} />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="easy" className="flex items-center gap-2">
                   <span className="w-2 h-2 bg-green-500 rounded-full"></span>
-                  Easy
+                  {t("ug_difficulty_easy")}
                 </SelectItem>
                 <SelectItem value="medium" className="flex items-center gap-2">
                   <span className="w-2 h-2 bg-yellow-500 rounded-full"></span>
-                  Medium
+                  {t("ug_difficulty_medium")}
                 </SelectItem>
                 <SelectItem value="hard" className="flex items-center gap-2">
                   <span className="w-2 h-2 bg-red-500 rounded-full"></span>
-                  Hard
+                  {t("ug_difficulty_hard")}
                 </SelectItem>
               </SelectContent>
             </Select>
           </div>
 
           <div className="space-y-2">
-            <Label className="text-sm font-medium text-gray-700">Number of Questions</Label>
+            <Label className="text-sm font-medium text-gray-700">{t("ug_numberOfQuestions")}</Label>
             <Input
               type="number"
               min={1}
@@ -184,7 +184,7 @@ export function UploadAndGenerate() {
               value={numberOfQuestions}
               onChange={(e) => setNumberOfQuestions(Number(e.target.value))}
               className="h-11 rounded-xl border-gray-200"
-              placeholder="Enter number (1-50)"
+              placeholder={t("ug_numberPlaceholder")}
             />
           </div>
         </div>
@@ -202,7 +202,7 @@ export function UploadAndGenerate() {
           {documentId && (
             <div className="flex items-center gap-2 ml-auto">
               <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-              <span className="text-sm text-green-600 font-medium">Document processed</span>
+              <span className="text-sm text-green-600 font-medium">{t("ug_documentProcessed")}</span>
             </div>
           )}
         </div>
@@ -222,17 +222,17 @@ export function UploadAndGenerate() {
             {uploading ? (
               <>
                 <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
-                Processing...
+                {t("ug_processing")}
               </>
             ) : documentId ? (
               <>
                 <CheckCircle className="w-4 h-4 mr-2" />
-                Uploaded
+                {t("ug_uploadedStatus")}
               </>
             ) : (
               <>
                 <Upload className="w-4 h-4 mr-2" />
-                Upload & Process
+                {t("ug_uploadProcess")}
               </>
             )}
           </Button>
@@ -251,12 +251,12 @@ export function UploadAndGenerate() {
             {generating ? (
               <>
                 <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
-                Generating...
+                {t("ug_generating")}
               </>
             ) : (
               <>
                 <Zap className="w-4 h-4 mr-2" />
-                Generate Questions
+                {t("ug_generate")}
               </>
             )}
           </Button>
@@ -269,9 +269,9 @@ export function UploadAndGenerate() {
                 <AlertCircle className="w-3 h-3 text-blue-600" />
               </div>
               <div>
-                <p className="text-sm font-medium text-blue-900">Ready to Generate</p>
+                <p className="text-sm font-medium text-blue-900">{t("ug_readyTitle")}</p>
                 <p className="text-xs text-blue-700 mt-1">
-                  Your document has been processed and is ready for AI question generation with Gemini 2.5 Flash.
+                  {t("ug_readyDesc")}
                 </p>
               </div>
             </div>

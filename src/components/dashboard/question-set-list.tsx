@@ -95,7 +95,7 @@ export function QuestionSetList() {
     <div className="space-y-4">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <h4 className="font-semibold text-gray-900">Recent Question Sets</h4>
+        <h4 className="font-semibold text-gray-900">{t("ql_recent")}</h4>
         <Button
           variant="ghost"
           size="sm"
@@ -104,7 +104,7 @@ export function QuestionSetList() {
           className="text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg"
         >
           <Sparkles className="w-4 h-4 mr-2" />
-          {loading ? 'Refreshing...' : 'Refresh'}
+          {loading ? t("loading") : t("refresh")}
         </Button>
       </div>
 
@@ -113,7 +113,7 @@ export function QuestionSetList() {
         <div className="flex items-center justify-center py-12">
           <div className="text-center space-y-3">
             <div className="w-8 h-8 border-3 border-blue-200 border-t-blue-600 rounded-full animate-spin mx-auto"></div>
-            <p className="text-sm text-gray-600">Loading your question sets...</p>
+            <p className="text-sm text-gray-600">{t("ql_loading")}</p>
           </div>
         </div>
       )}
@@ -124,9 +124,9 @@ export function QuestionSetList() {
           <div className="w-16 h-16 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
             <FileText className="w-8 h-8 text-gray-400" />
           </div>
-          <h3 className="font-medium text-gray-900 mb-2">No question sets yet</h3>
+          <h3 className="font-medium text-gray-900 mb-2">{t("ql_none")}</h3>
           <p className="text-sm text-gray-500 mb-4">
-            Upload a PDF document to generate your first set of intelligent questions.
+            {t("ql_emptyDesc")}
           </p>
         </div>
       )}
@@ -158,7 +158,7 @@ export function QuestionSetList() {
                         </span>
                         <span className="flex items-center gap-1">
                           <Hash className="w-3 h-3" />
-                          {qs.totalQuestions} questions
+                          {qs.totalQuestions} {t("ql_questionsSuffix")}
                         </span>
                       </div>
                     </div>
@@ -168,11 +168,11 @@ export function QuestionSetList() {
                   <div className="flex items-center gap-2 mt-3">
                     <div className="inline-flex items-center gap-1 px-2 py-1 bg-blue-50 text-blue-700 text-xs font-medium rounded-md">
                       <Zap className="w-3 h-3" />
-                      AI Generated
+                      {t("ug_aiGenerated")}
                     </div>
                     <div className="inline-flex items-center gap-1 px-2 py-1 bg-green-50 text-green-700 text-xs font-medium rounded-md">
                       <Sparkles className="w-3 h-3" />
-                      RAG Enhanced
+                      {t("ug_ragEnhanced")}
                     </div>
                   </div>
                 </div>
@@ -189,7 +189,7 @@ export function QuestionSetList() {
                     className="h-8 px-3 text-xs hover:bg-blue-50 hover:text-blue-600 hover:border-blue-200"
                   >
                     <ExternalLink className="w-3 h-3 mr-1" />
-                    View
+                    {t("ql_view")}
                   </Button>
                   <Button
                     size="sm"
@@ -200,7 +200,7 @@ export function QuestionSetList() {
                     }}
                     className="h-8 px-3 text-xs hover:bg-red-50 hover:text-red-600 hover:border-red-200"
                   >
-                    Delete
+                    {t("ql_delete")}
                   </Button>
                 </div>
               </div>
@@ -219,7 +219,7 @@ export function QuestionSetList() {
                 className="w-full h-11 rounded-xl border-dashed border-gray-300 hover:border-gray-400 hover:bg-gray-50 transition-colors"
               >
                 <ExternalLink className="w-4 h-4 mr-2" />
-                View All Question Sets ({questionSets.length})
+                {t("ql_viewAll")} ({questionSets.length})
               </Button>
             </div>
           )}

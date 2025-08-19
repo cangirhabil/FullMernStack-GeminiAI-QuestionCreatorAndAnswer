@@ -9,6 +9,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { ExportButtons } from "@/components/ui/export-buttons";
 import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, Calendar, Hash, Brain, Tag } from "lucide-react";
+import { useLang } from "@/components/providers/lang-provider";
 
 interface Question {
   question: string;
@@ -43,6 +44,7 @@ export default function QuestionSetDetailPage() {
   const [data, setData] = useState<QuestionSet | null>(null);
   const [fetching, setFetching] = useState(false);
   const router = useRouter();
+  const { t, locale } = useLang();
 
   useEffect(() => {
     if (!loading && user && id) {
@@ -65,14 +67,14 @@ export default function QuestionSetDetailPage() {
         <Spinner />
       </div>
     );
-  if (!user) return <div className="p-10 text-center">Giriş gerekli</div>;
+  if (!user) return <div className="p-10 text-center">{t("auth_required")}</div>;
   if (fetching)
     return (
       <div className="flex justify-center p-10">
         <Spinner />
       </div>
     );
-  if (!data) return <div className="p-10">Question set not found</div>;
+  if (!data) return <div className="p-10">{t("questionDetail_notFound")}</div>;
 
   const getDifficultyColor = (difficulty: string) => {
     switch (difficulty.toLowerCase()) {
@@ -108,7 +110,7 @@ export default function QuestionSetDetailPage() {
               className="flex items-center gap-2"
             >
               <ArrowLeft className="h-4 w-4" />
-              Back
+              {t("back")}
             </Button>
             <h1 className="text-3xl font-bold">{data.title}</h1>
           </div>
@@ -121,22 +123,22 @@ export default function QuestionSetDetailPage() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 p-4 bg-muted/50 rounded-lg">
           <div className="flex items-center space-x-2">
             <Hash className="h-4 w-4 text-muted-foreground" />
-            <span className="text-sm font-medium">Total Questions:</span>
+            <span className="text-sm font-medium">{t("questionDetail_totalQuestions")}:</span>
             <Badge variant="secondary">{data.questions.length}</Badge>
           </div>
           
           <div className="flex items-center space-x-2">
             <Calendar className="h-4 w-4 text-muted-foreground" />
-            <span className="text-sm font-medium">Created:</span>
+            <span className="text-sm font-medium">{t("questionDetail_createdAt")}:</span>
             <span className="text-sm text-muted-foreground">
-              {new Date(data.createdAt).toLocaleDateString()}
+              {new Date(data.createdAt).toLocaleDateString(locale)}
             </span>
           </div>
 
           {data.metadata?.aiModel && (
             <div className="flex items-center space-x-2">
               <Brain className="h-4 w-4 text-muted-foreground" />
-              <span className="text-sm font-medium">AI Model:</span>
+              <span className="text-sm font-medium">{t("questionDetail_aiModelLabel")}:</span>
               <Badge variant="outline" className="text-xs">
                 {data.metadata.aiModel}
               </Badge>
@@ -147,7 +149,7 @@ export default function QuestionSetDetailPage() {
             <div className="flex items-center space-x-2">
               <Tag className="h-4 w-4 text-muted-foreground" />
               <Badge variant="outline" className="text-xs bg-blue-50 text-blue-700">
-                RAG Enhanced
+                {t("ug_ragEnhanced")}
               </Badge>
             </div>
           )}
@@ -164,7 +166,7 @@ export default function QuestionSetDetailPage() {
                   <span className="bg-primary text-primary-foreground rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold">
                     {idx + 1}
                   </span>
-                  Question {idx + 1}
+                  {t("qd_questionLabel")} {idx + 1}
                 </CardTitle>
                 
                 <div className="flex gap-2 flex-wrap">
@@ -188,14 +190,14 @@ export default function QuestionSetDetailPage() {
             <CardContent className="space-y-4">
               {/* Question */}
               <div>
-                <h4 className="font-medium text-sm text-muted-foreground mb-2">QUESTION:</h4>
-                <p className="text-base leading-relaxed">{q.question}</p>
+                <h4 className="font-medium text-sm text-muted-foreground mb-2">{t("qd_questionUpper")}</h4>
+                <p className="text-base leading-relaxed break-words break-all whitespace-pre-wrap max-w-full">{q.question}</p>
               </div>
 
               {/* Answer */}
               <div>
-                <h4 className="font-medium text-sm text-muted-foreground mb-2">ANSWER:</h4>
-                <p className="text-sm leading-relaxed whitespace-pre-wrap bg-muted/30 p-3 rounded-md">
+                <h4 className="font-medium text-sm text-muted-foreground mb-2">{t("qd_answerUpper")}</h4>
+                <p className="text-sm leading-relaxed whitespace-pre-wrap bg-muted/30 p-3 rounded-md break-words break-all max-w-full">
                   {q.answer}
                 </p>
               </div>
@@ -205,7 +207,7 @@ export default function QuestionSetDetailPage() {
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-3 border-t">
                   {q.keywords && q.keywords.length > 0 && (
                     <div>
-                      <h5 className="text-xs font-medium text-muted-foreground mb-1">KEYWORDS:</h5>
+                      <h5 className="text-xs font-medium text-muted-foreground mb-1">{t("qd_keywordsUpper")}</h5>
                       <div className="flex flex-wrap gap-1">
                         {q.keywords.map((keyword, kidx) => (
                           <Badge key={kidx} variant="secondary" className="text-xs">
@@ -218,8 +220,8 @@ export default function QuestionSetDetailPage() {
 
                   {q.assessment_criteria && (
                     <div>
-                      <h5 className="text-xs font-medium text-muted-foreground mb-1">ASSESSMENT:</h5>
-                      <p className="text-xs text-muted-foreground">
+                      <h5 className="text-xs font-medium text-muted-foreground mb-1">{t("qd_assessmentUpper")}</h5>
+                      <p className="text-xs text-muted-foreground break-words break-all max-w-full">
                         {q.assessment_criteria}
                       </p>
                     </div>
@@ -227,8 +229,8 @@ export default function QuestionSetDetailPage() {
 
                   {q.industry_relevance && (
                     <div>
-                      <h5 className="text-xs font-medium text-muted-foreground mb-1">RELEVANCE:</h5>
-                      <p className="text-xs text-muted-foreground">
+                      <h5 className="text-xs font-medium text-muted-foreground mb-1">{t("qd_relevanceUpper")}</h5>
+                      <p className="text-xs text-muted-foreground break-words break-all max-w-full">
                         {q.industry_relevance}
                       </p>
                     </div>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useLang } from "@/components/providers/lang-provider";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -28,6 +29,7 @@ interface ExportButtonsProps {
 
 export function ExportButtons({ questionSet, className }: ExportButtonsProps) {
   const [showExamDialog, setShowExamDialog] = useState(false);
+  const { t } = useLang();
 
   const handleExamExport = (examInfo: ExamInfo) => {
     exportToExamPDF(questionSet, examInfo);
@@ -45,7 +47,7 @@ export function ExportButtons({ questionSet, className }: ExportButtonsProps) {
           className="flex items-center gap-1 bg-blue-600 hover:bg-blue-700"
         >
           <GraduationCap className="h-4 w-4" />
-          Export as Exam
+          {t("export_exam")}
         </Button>
 
         {/* Dropdown for All Options */}
@@ -53,16 +55,16 @@ export function ExportButtons({ questionSet, className }: ExportButtonsProps) {
           <DropdownMenuTrigger asChild>
             <Button variant="outline" size="sm">
               <Download className="h-4 w-4 mr-1" />
-              More Options
+              {t("export_moreOptions")}
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-48">
-            <DropdownMenuLabel>Export Options</DropdownMenuLabel>
+            <DropdownMenuLabel>{t("export_options")}</DropdownMenuLabel>
             <DropdownMenuSeparator />
             
             <DropdownMenuItem onClick={() => exportToJSON(questionSet)}>
               <FileText className="h-4 w-4 mr-2" />
-              JSON Format
+              {t("export_json")}
               <span className="ml-auto text-xs text-muted-foreground">
                 .json
               </span>
@@ -70,7 +72,7 @@ export function ExportButtons({ questionSet, className }: ExportButtonsProps) {
 
             <DropdownMenuItem onClick={() => exportToCSV(questionSet)}>
               <Table className="h-4 w-4 mr-2" />
-              CSV Spreadsheet
+              {t("export_csv")}
               <span className="ml-auto text-xs text-muted-foreground">
                 .csv
               </span>
@@ -78,7 +80,7 @@ export function ExportButtons({ questionSet, className }: ExportButtonsProps) {
 
             <DropdownMenuItem onClick={() => exportToPDF(questionSet)}>
               <FileOutput className="h-4 w-4 mr-2" />
-              PDF Document
+              {t("export_pdf")}
               <span className="ml-auto text-xs text-muted-foreground">
                 .pdf
               </span>
@@ -91,7 +93,7 @@ export function ExportButtons({ questionSet, className }: ExportButtonsProps) {
               className="text-blue-600 focus:text-blue-600"
             >
               <GraduationCap className="h-4 w-4 mr-2" />
-              Exam Format
+              {t("export_examFormat")}
               <span className="ml-auto text-xs text-muted-foreground">
                 .pdf
               </span>
@@ -105,7 +107,7 @@ export function ExportButtons({ questionSet, className }: ExportButtonsProps) {
         isOpen={showExamDialog}
         onClose={() => setShowExamDialog(false)}
         onExport={handleExamExport}
-        questionSetTitle={questionSet.title}
+  questionSetTitle={questionSet.title}
       />
     </>
   );
