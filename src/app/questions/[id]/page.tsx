@@ -98,11 +98,11 @@ export default function QuestionSetDetailPage() {
   };
 
   return (
-    <div className="container max-w-6xl mx-auto p-6 space-y-6">
+    <div className="container max-w-6xl mx-auto p-4 sm:p-6 space-y-6">
       {/* Header Section */}
       <div className="flex flex-col space-y-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-4">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+          <div className="flex items-center space-x-4 flex-wrap">
             <Button
               variant="outline"
               size="sm"
@@ -112,31 +112,33 @@ export default function QuestionSetDetailPage() {
               <ArrowLeft className="h-4 w-4" />
               {t("back")}
             </Button>
-            <h1 className="text-3xl font-bold">{data.title}</h1>
+            <h1 className="text-2xl sm:text-3xl font-bold break-words max-w-full">{data.title}</h1>
           </div>
           
           {/* Export Buttons */}
-          <ExportButtons questionSet={data} />
+          <div className="flex flex-wrap gap-2">
+            <ExportButtons questionSet={data} />
+          </div>
         </div>
 
         {/* Question Set Metadata */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 p-4 bg-muted/50 rounded-lg">
+  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 p-4 bg-muted/50 rounded-lg">
           <div className="flex items-center space-x-2">
             <Hash className="h-4 w-4 text-muted-foreground" />
             <span className="text-sm font-medium">{t("questionDetail_totalQuestions")}:</span>
             <Badge variant="secondary">{data.questions.length}</Badge>
           </div>
           
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-2 min-w-0">
             <Calendar className="h-4 w-4 text-muted-foreground" />
             <span className="text-sm font-medium">{t("questionDetail_createdAt")}:</span>
-            <span className="text-sm text-muted-foreground">
+            <span className="text-sm text-muted-foreground truncate">
               {new Date(data.createdAt).toLocaleDateString(locale)}
             </span>
           </div>
 
           {data.metadata?.aiModel && (
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-2 min-w-0">
               <Brain className="h-4 w-4 text-muted-foreground" />
               <span className="text-sm font-medium">{t("questionDetail_aiModelLabel")}:</span>
               <Badge variant="outline" className="text-xs">
@@ -146,7 +148,7 @@ export default function QuestionSetDetailPage() {
           )}
 
           {data.metadata?.ragEnabled && (
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-2 min-w-0">
               <Tag className="h-4 w-4 text-muted-foreground" />
               <Badge variant="outline" className="text-xs bg-blue-50 text-blue-700">
                 {t("ug_ragEnhanced")}
@@ -159,10 +161,10 @@ export default function QuestionSetDetailPage() {
       {/* Questions List */}
       <div className="space-y-6">
         {data.questions.map((q, idx) => (
-          <Card key={idx} className="shadow-sm hover:shadow-md transition-shadow">
+          <Card key={idx} className="shadow-sm hover:shadow-md transition-shadow overflow-hidden">
             <CardHeader className="pb-3">
-              <div className="flex justify-between items-start">
-                <CardTitle className="text-lg font-semibold flex items-center gap-2">
+              <div className="flex flex-col sm:flex-row sm:justify-between gap-3 items-start">
+                <CardTitle className="text-lg font-semibold flex items-center gap-2 flex-wrap">
                   <span className="bg-primary text-primary-foreground rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold">
                     {idx + 1}
                   </span>
@@ -174,7 +176,7 @@ export default function QuestionSetDetailPage() {
                     {q.difficulty.toUpperCase()}
                   </Badge>
                   {q.category && (
-                    <Badge variant="outline">
+                    <Badge variant="outline" className="truncate max-w-[140px]">
                       {q.category}
                     </Badge>
                   )}

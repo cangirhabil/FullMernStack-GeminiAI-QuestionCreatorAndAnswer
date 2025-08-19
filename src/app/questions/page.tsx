@@ -61,11 +61,11 @@ export default function QuestionsPage() {
     );
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50">
+  <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50">
       {/* Header */}
       <div className="border-b border-gray-200/50 bg-white/80 backdrop-blur-xl sticky top-0 z-50">
-        <div className="container mx-auto px-6 py-4">
-          <div className="flex items-center gap-4">
+        <div className="container mx-auto px-4 sm:px-6 py-3 sm:py-4">
+          <div className="flex items-center gap-3 sm:gap-4 flex-wrap">
             <Button
               variant="ghost"
               size="sm"
@@ -76,7 +76,7 @@ export default function QuestionsPage() {
               {t("back")}
             </Button>
             <div>
-              <h1 className="text-2xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent">
+              <h1 className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent break-words">
                 {t("questions_title")}
               </h1>
               <p className="text-gray-600 text-sm">{t("questions_subtitle")}</p>
@@ -86,7 +86,7 @@ export default function QuestionsPage() {
       </div>
 
       {/* Main Content */}
-      <div className="container max-w-7xl mx-auto p-6">
+  <div className="container max-w-7xl mx-auto p-4 sm:p-6">
         {/* Loading State */}
         {fetching && (
           <div className="flex items-center justify-center py-20">
@@ -129,7 +129,7 @@ export default function QuestionsPage() {
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5 md:gap-6">
               {data.map((qs, index) => (
                 <Card 
                   key={qs._id} 
@@ -142,7 +142,7 @@ export default function QuestionsPage() {
                         <Brain className="w-6 h-6 text-white" />
                       </div>
                       <div className="min-w-0 flex-1">
-                        <CardTitle className="text-lg font-semibold text-gray-900 line-clamp-2 group-hover:text-blue-600 transition-colors">
+                        <CardTitle className="text-base sm:text-lg font-semibold text-gray-900 line-clamp-2 group-hover:text-blue-600 transition-colors">
                           {qs.title}
                         </CardTitle>
                         <div className="flex items-center gap-3 text-xs text-gray-500 mt-2">

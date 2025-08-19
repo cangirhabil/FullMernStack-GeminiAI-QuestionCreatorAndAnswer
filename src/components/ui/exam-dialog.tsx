@@ -96,11 +96,11 @@ export function ExamDialog({ isOpen, onClose, onExport, questionSetTitle }: Exam
 
         <div className="grid gap-4 py-4">
           {/* Exam Title */}
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="title" className="text-right">
+          <div className="grid grid-cols-1 sm:grid-cols-4 items-start gap-2 sm:gap-4">
+            <Label htmlFor="title" className="sm:text-right text-left">
               {t("exam_titleLabel")} *
             </Label>
-            <div className="col-span-3">
+            <div className="sm:col-span-3">
               <Input
                 id="title"
                 value={examInfo.title}
@@ -115,11 +115,11 @@ export function ExamDialog({ isOpen, onClose, onExport, questionSetTitle }: Exam
           </div>
 
           {/* Institution */}
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="institution" className="text-right">
+          <div className="grid grid-cols-1 sm:grid-cols-4 items-start gap-2 sm:gap-4">
+            <Label htmlFor="institution" className="sm:text-right text-left">
               {t("exam_institutionLabel")} *
             </Label>
-            <div className="col-span-3">
+            <div className="sm:col-span-3">
               <Input
                 id="institution"
                 value={examInfo.institution}
@@ -134,11 +134,11 @@ export function ExamDialog({ isOpen, onClose, onExport, questionSetTitle }: Exam
           </div>
 
           {/* Student Information */}
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="studentName" className="text-right">
+          <div className="grid grid-cols-1 sm:grid-cols-4 items-start gap-2 sm:gap-4">
+            <Label htmlFor="studentName" className="sm:text-right text-left">
               {t("exam_studentNameLabel")}
             </Label>
-            <div className="col-span-3 grid grid-cols-2 gap-2">
+            <div className="sm:col-span-3 grid grid-cols-1 md:grid-cols-2 gap-2">
               <Input
                 id="studentName"
                 value={examInfo.studentName}
@@ -155,11 +155,11 @@ export function ExamDialog({ isOpen, onClose, onExport, questionSetTitle }: Exam
           </div>
 
           {/* Student Number */}
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="studentNumber" className="text-right">
+          <div className="grid grid-cols-1 sm:grid-cols-4 items-start gap-2 sm:gap-4">
+            <Label htmlFor="studentNumber" className="sm:text-right text-left">
               {t("exam_studentNumberLabel")}
             </Label>
-            <div className="col-span-3">
+            <div className="sm:col-span-3">
               <Input
                 id="studentNumber"
                 value={examInfo.studentNumber}
@@ -170,11 +170,11 @@ export function ExamDialog({ isOpen, onClose, onExport, questionSetTitle }: Exam
           </div>
 
           {/* Exam Date and Duration */}
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="examDate" className="text-right">
+          <div className="grid grid-cols-1 sm:grid-cols-4 items-start gap-2 sm:gap-4">
+            <Label htmlFor="examDate" className="sm:text-right text-left">
               {t("exam_examDateLabel")} *
             </Label>
-            <div className="col-span-3 grid grid-cols-2 gap-2">
+            <div className="sm:col-span-3 grid grid-cols-1 md:grid-cols-2 gap-2">
               <div>
                 <Input
                   id="examDate"
@@ -197,11 +197,11 @@ export function ExamDialog({ isOpen, onClose, onExport, questionSetTitle }: Exam
           </div>
 
           {/* Course */}
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="course" className="text-right">
+          <div className="grid grid-cols-1 sm:grid-cols-4 items-start gap-2 sm:gap-4">
+            <Label htmlFor="course" className="sm:text-right text-left">
               {t("exam_courseLabel")}
             </Label>
-            <div className="col-span-3">
+            <div className="sm:col-span-3">
               <Input
                 id="course"
                 value={examInfo.course}
@@ -212,11 +212,11 @@ export function ExamDialog({ isOpen, onClose, onExport, questionSetTitle }: Exam
           </div>
 
           {/* Instructor */}
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="instructor" className="text-right">
+          <div className="grid grid-cols-1 sm:grid-cols-4 items-start gap-2 sm:gap-4">
+            <Label htmlFor="instructor" className="sm:text-right text-left">
               {t("exam_instructorLabel")}
             </Label>
-            <div className="col-span-3">
+            <div className="sm:col-span-3">
               <Input
                 id="instructor"
                 value={examInfo.instructor}

@@ -94,7 +94,7 @@ export function QuestionSetList() {
   return (
     <div className="space-y-4">
       {/* Header */}
-      <div className="flex items-center justify-between">
+  <div className="flex items-center justify-between flex-wrap gap-3">
         <h4 className="font-semibold text-gray-900">{t("ql_recent")}</h4>
         <Button
           variant="ghost"
@@ -143,12 +143,12 @@ export function QuestionSetList() {
               {/* Content */}
               <div className="flex items-start justify-between gap-4">
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-3 mb-2">
+            <div className="flex items-center gap-3 mb-2 flex-wrap">
                     <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg flex items-center justify-center flex-shrink-0">
                       <Brain className="w-5 h-5 text-white" />
                     </div>
                     <div className="min-w-0 flex-1">
-                      <h3 className="font-medium text-gray-900 truncate group-hover:text-blue-600 transition-colors">
+              <h3 className="font-medium text-gray-900 truncate group-hover:text-blue-600 transition-colors max-w-full">
                         {qs.title}
                       </h3>
                       <div className="flex items-center gap-3 text-xs text-gray-500 mt-1">
@@ -178,7 +178,7 @@ export function QuestionSetList() {
                 </div>
 
                 {/* Actions */}
-                <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity flex-wrap">
                   <Button
                     size="sm"
                     variant="outline"

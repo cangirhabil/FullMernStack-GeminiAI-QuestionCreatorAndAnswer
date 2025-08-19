@@ -37,14 +37,14 @@ export function ExportButtons({ questionSet, className }: ExportButtonsProps) {
 
   return (
     <>
-      <div className={`flex gap-2 ${className}`}>
+      <div className={`flex gap-2 flex-wrap ${className}`}>
 
         {/* Exam Export Button */}
         <Button
           variant="default"
           size="sm"
           onClick={() => setShowExamDialog(true)}
-          className="flex items-center gap-1 bg-blue-600 hover:bg-blue-700"
+          className="flex items-center gap-1 bg-blue-600 hover:bg-blue-700 text-sm whitespace-nowrap"
         >
           <GraduationCap className="h-4 w-4" />
           {t("export_exam")}
@@ -53,7 +53,7 @@ export function ExportButtons({ questionSet, className }: ExportButtonsProps) {
         {/* Dropdown for All Options */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="outline" size="sm">
+            <Button variant="outline" size="sm" className="text-sm whitespace-nowrap">
               <Download className="h-4 w-4 mr-1" />
               {t("export_moreOptions")}
             </Button>

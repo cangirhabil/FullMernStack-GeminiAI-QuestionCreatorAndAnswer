@@ -90,7 +90,7 @@ export function UploadAndGenerate() {
     <div className="space-y-6">
       {/* Step 1: Upload */}
       <div className="space-y-4">
-        <div className="flex items-center gap-3">
+  <div className="flex items-center gap-3 flex-wrap">
           <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${
             file ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700'
           }`}>
@@ -98,9 +98,9 @@ export function UploadAndGenerate() {
           </div>
           <h3 className="font-semibold text-gray-900">{t("ug_step1")}</h3>
           {file && (
-            <div className="flex items-center gap-2 ml-auto">
+            <div className="flex items-center gap-2 ml-auto min-w-0">
               <FileText className="w-4 h-4 text-green-600" />
-              <span className="text-sm text-green-600 font-medium">{file.name}</span>
+              <span className="text-sm text-green-600 font-medium truncate max-w-[150px] sm:max-w-[220px]" title={file.name}>{file.name}</span>
             </div>
           )}
         </div>
@@ -142,7 +142,7 @@ export function UploadAndGenerate() {
 
       {/* Step 2: Configuration */}
       <div className="space-y-4">
-        <div className="flex items-center gap-3">
+  <div className="flex items-center gap-3 flex-wrap">
           <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${
             file ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-400'
           }`}>
@@ -192,7 +192,7 @@ export function UploadAndGenerate() {
 
       {/* Step 3: Actions */}
       <div className="space-y-4">
-        <div className="flex items-center gap-3">
+  <div className="flex items-center gap-3 flex-wrap">
           <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${
             documentId ? 'bg-green-100 text-green-700' : file ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-400'
           }`}>
@@ -207,12 +207,12 @@ export function UploadAndGenerate() {
           )}
         </div>
 
-        <div className="flex gap-3">
+    <div className="flex gap-3 flex-col sm:flex-row">
           <Button
             onClick={handleUpload}
             disabled={!file || uploading || !!documentId}
             className={`
-              flex-1 h-12 rounded-xl font-medium transition-all duration-200
+      flex-1 h-12 rounded-xl font-medium transition-all duration-200 w-full
               ${!file || uploading || !!documentId 
                 ? 'bg-gray-100 text-gray-400 cursor-not-allowed' 
                 : 'bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white shadow-lg hover:shadow-xl'
@@ -237,11 +237,11 @@ export function UploadAndGenerate() {
             )}
           </Button>
 
-          <Button
+      <Button
             onClick={handleGenerate}
             disabled={!documentId || generating}
             className={`
-              flex-1 h-12 rounded-xl font-medium transition-all duration-200
+        flex-1 h-12 rounded-xl font-medium transition-all duration-200 w-full
               ${!documentId || generating
                 ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
                 : 'bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 text-white shadow-lg hover:shadow-xl'
