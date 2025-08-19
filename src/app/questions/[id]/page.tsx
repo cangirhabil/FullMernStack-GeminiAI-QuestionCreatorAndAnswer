@@ -98,7 +98,7 @@ export default function QuestionSetDetailPage() {
   };
 
   return (
-    <div className="container max-w-6xl mx-auto p-4 sm:p-6 space-y-6">
+    <div className="container max-w-10xl mx-auto p-4 sm:p-6 space-y-6">
       {/* Header Section */}
       <div className="flex flex-col space-y-4">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
