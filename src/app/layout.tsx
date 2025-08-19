@@ -31,7 +31,7 @@ export default function RootLayout({
         <LangProvider>
           <AuthProvider>
             <StatsProvider>
-              <MainHeader />
+              {/* <MainHeader /> */}
               <div className="min-h-screen pt-0">{children}</div>
               <Toaster
                 position="top-right"
