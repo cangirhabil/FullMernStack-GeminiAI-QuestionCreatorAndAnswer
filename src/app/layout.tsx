@@ -5,6 +5,7 @@ import { Toaster } from "react-hot-toast";
 import AuthProvider from "@/components/providers/auth-provider";
 import { LangProvider } from "@/components/providers/lang-provider";
 import { StatsProvider } from "@/components/providers/stats-provider";
+import MainHeader from "@/components/ui/main-header";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -30,7 +31,8 @@ export default function RootLayout({
         <LangProvider>
           <AuthProvider>
             <StatsProvider>
-              <div className="min-h-screen">{children}</div>
+              <MainHeader />
+              <div className="min-h-screen pt-0">{children}</div>
               <Toaster
                 position="top-right"
                 toastOptions={{
