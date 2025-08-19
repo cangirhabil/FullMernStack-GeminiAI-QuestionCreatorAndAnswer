@@ -41,6 +41,7 @@
     "multer": "^2.0.2",
     "next": "15.4.6",
     "pdf-parse": "^1.1.1",
+    "pdfjs-dist": "^4.10.38",
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "react-hot-toast": "^2.6.0",

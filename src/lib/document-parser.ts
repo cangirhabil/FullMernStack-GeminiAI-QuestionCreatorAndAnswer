@@ -4,34 +4,63 @@ let pdfParse: ((buffer: Buffer) => Promise<{
   info?: Record<string, unknown>;
 }>) | null = null;
 
-// Dynamically import pdf-parse to avoid build issues
-const getPdfParse = async () => {
-  if (!pdfParse) {
+/**
+ * Lazy-load pdf-parse at runtime only (server side). Avoids build-time resolution
+ * issues with Turbopack / Next.js by not touching require.cache / require.resolve.
+ * Falls back gracefully with a mock implementation if the module is unavailable
+ * (e.g. optional dependency or edge runtime).
+ */
+const getPdfParse = async (): Promise<(
+  buffer: Buffer
+) => Promise<{ text: string; numpages: number; info?: Record<string, unknown> }>> => {
+  if (pdfParse) return pdfParse;
+  try {
+    // Dynamic import (CommonJS default export)
+    // First try the safe wrapper (skips debug code) then fall back to normal import
     try {
-      // Clear require cache and try different import methods
-      delete require.cache[require.resolve('pdf-parse')];
-      
-      const pdfParseModule = await import('pdf-parse');
-      pdfParse = pdfParseModule.default || pdfParseModule;
-      
-      if (typeof pdfParse !== 'function') {
-        throw new Error('pdf-parse import failed - not a function');
-      }
-      
-    } catch (error) {
-      console.error('Failed to load pdf-parse:', error);
-      // Return a mock function for graceful fallback
-      return async (buffer: Buffer) => {
-        console.warn('PDF parsing not available, returning mock data');
+      const { loadPdfParse } = await import('./pdf-parse-wrapper');
+      pdfParse = await loadPdfParse();
+    } catch {
+      const mod = await import('pdf-parse');
+      const fn: unknown = (mod as { default?: unknown }).default ?? mod;
+      if (typeof fn !== 'function') throw new Error('pdf-parse did not export a function');
+      pdfParse = fn as (buffer: Buffer) => Promise<{ text: string; numpages: number; info?: Record<string, unknown> }>;
+    }
+  } catch (error) {
+    console.error('Failed to load pdf-parse (using fallback):', error);
+    pdfParse = async (buffer: Buffer) => {
+      console.warn('Attempting pdfjs-dist fallback extraction');
+      try {
+        const pdfjs = await import('pdfjs-dist');
+        // Use loose typing via unknown and refine
+        const candidate: unknown = (pdfjs as unknown as { getDocument?: unknown; default?: { getDocument?: unknown } }).getDocument
+          || (pdfjs as unknown as { default?: { getDocument?: unknown } }).default?.getDocument;
+        if (typeof candidate !== 'function') throw new Error('pdfjs getDocument not available');
+  interface PdfjsPage { getTextContent: () => Promise<{ items: Array<{ str?: string }> }>; }
+  interface PdfjsDoc { numPages: number; getPage: (n: number) => Promise<PdfjsPage>; }
+  interface PdfjsLoadingTask<T> { promise: Promise<T>; }
+  const loadingTask = (candidate as (args: { data: Buffer }) => PdfjsLoadingTask<PdfjsDoc>)({ data: buffer });
+  const doc = await loadingTask.promise;
+        let text = '';
+        const maxPages = Math.min(doc.numPages, 25); // cap for performance
+        for (let i = 1; i <= maxPages; i++) {
+          const page = await doc.getPage(i);
+          const content: { items: Array<{ str?: string }> } = await page.getTextContent();
+          const pageText = content.items.map(it => it.str || '').join(' ');
+          text += pageText + '\n';
+        }
+        return { text, numpages: doc.numPages, info: { Title: 'Unknown PDF (pdfjs fallback)' } };
+      } catch (e) {
+        console.warn('pdfjs-dist fallback failed, returning minimal placeholder', e);
         return {
-          text: `PDF parsing temporarily unavailable. File size: ${buffer.length} bytes.`,
+          text: `PDF parsing unavailable. Size: ${buffer.length} bytes (no parser).`,
           numpages: 1,
           info: { Title: 'Unknown PDF' }
         };
-      };
-    }
+      }
+    };
   }
-  return pdfParse;
+  return pdfParse as (buffer: Buffer) => Promise<{ text: string; numpages: number; info?: Record<string, unknown> }>;
 };
 
 interface ParsedDocument {
