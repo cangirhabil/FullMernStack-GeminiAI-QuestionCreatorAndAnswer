@@ -49,6 +49,7 @@ export async function POST(request: NextRequest) {
       difficulty = "medium",
       dryRun = false,
       mode,
+      language = 'en'
     } = body;
 
     // Fast path: API key validation dry run (no DB question set persist)
@@ -155,7 +156,8 @@ export async function POST(request: NextRequest) {
         textContent,
         numberOfQuestions,
         difficulty,
-        docWithPossibleContent.originalName
+        docWithPossibleContent.originalName,
+        language
       );
       
       console.log(`RAG service generated ${questions.length} questions`);
@@ -188,34 +190,34 @@ export async function POST(request: NextRequest) {
         });
       }
       
+      const langLabel = language === 'tr' ? 'Turkish' : language === 'nl' ? 'Dutch' : 'English';
       const fallbackPrompt = `
 You are an expert at creating interview questions based on document content.
-Your goal is to prepare a candidate for their interview and tests.
+Return output strictly in ${langLabel}. If the source content is another language, still produce the questions and answers in ${langLabel}.
 
 Based on the following document content, create exactly ${numberOfQuestions} interview questions with their answers.
 Each question should be at ${difficulty} difficulty level.
 
 Document content:
 """
-${textContent.slice(0, 8000)} // Limit text to avoid token limits
+${textContent.slice(0, 8000)}
 """
 
-Please format your response as a JSON array where each object has the following structure:
+Respond ONLY with valid JSON array. Each item structure:
 {
-  "question": "The interview question",
-  "answer": "A comprehensive answer to the question",
+  "question": "${langLabel} interview question",
+  "answer": "${langLabel} detailed answer",
   "difficulty": "${difficulty}",
-  "category": "Category of the question (e.g., Technical, Conceptual, Practical)",
-  "keywords": ["relevant", "keywords"],
-  "source_context": "Brief reference to document section"
+  "category": "Kategori / Category",
+  "keywords": ["kelime", "keywords"],
+  "source_context": "Belge bölümü / Document section"
 }
 
-Make sure to:
-1. Create diverse questions covering different aspects of the content
-2. Provide detailed, accurate answers
-3. Ensure questions are relevant for interview preparation
-4. Return exactly ${numberOfQuestions} questions
-5. Return only valid JSON, no additional text
+Rules:
+1. Output language: ${langLabel}
+2. No explanations outside JSON
+3. Exactly ${numberOfQuestions} items
+4. Ensure culturally and linguistically natural phrasing
 `;
 
       const result = await withRetry(async () => {

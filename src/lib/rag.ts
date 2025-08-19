@@ -238,7 +238,8 @@ export class RAGService {
     documentContent: string,
     numberOfQuestions: number,
     difficulty: string,
-    filename: string
+    filename: string,
+    language: string = 'en'
   ): Promise<Question[]> {
     // Use Gemini 2.5 Flash for advanced question generation
     let model;
@@ -293,9 +294,19 @@ export class RAGService {
     // Combine all retrieved context
     const retrievedContext = contextParts.join("\n\n========\n\n");
 
+    const languageLabel = language === 'tr' ? 'Turkish' : language === 'nl' ? 'Dutch' : 'English';
+    const languageInstructions = language === 'tr'
+      ? `TÜM soruları ve cevapları DOĞAL Türkçe ile yaz. JSON alan adları İngilizce kalacak (question, answer vb).`
+      : language === 'nl'
+        ? `ALLE vragen en antwoorden in natuurlijk Nederlands schrijven. JSON sleutel namen Engels blijven (question, answer enz.).`
+        : `Write ALL questions and answers in natural English. JSON field names remain in English.`;
+
     const enhancedPrompt = `
 You are an advanced AI interview question creator, leveraging Gemini 2.5 Pro capabilities for superior question design.
 Your expertise includes psychological assessment, pedagogical principles, and industry-specific knowledge evaluation.
+
+LANGUAGE REQUIREMENT: ${languageLabel}
+${languageInstructions}
 
 DOCUMENT ANALYSIS:
 - Filename: ${filename}
@@ -308,7 +319,7 @@ CONTEXTUAL CONTENT:
 ${retrievedContext || documentContent.slice(0, 8000)}
 """
 
-ADVANCED TASK SPECIFICATION:
+ADVANCED TASK SPECIFICATION (Language: ${languageLabel}):
 Generate exactly ${numberOfQuestions} interview questions at ${difficulty} difficulty level with the following enhanced criteria:
 
 COGNITIVE ASSESSMENT FRAMEWORK:
@@ -354,7 +365,7 @@ DIFFICULTY LEVEL GUIDELINES:
 - Medium: Application and analysis of concepts
 - Hard: Complex analysis, synthesis, and critical evaluation
 
-Return a JSON array where each object follows this sophisticated structure:
+Return a JSON array where each object follows this sophisticated structure (field names in English, values in ${languageLabel}):
 {
   "question": "Precisely crafted interview question with clear assessment intent",
   "answer": "Comprehensive, nuanced answer demonstrating deep subject mastery",
