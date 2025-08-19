@@ -36,36 +36,6 @@ export function ExportButtons({ questionSet, className }: ExportButtonsProps) {
   return (
     <>
       <div className={`flex gap-2 ${className}`}>
-        {/* Quick Export Buttons */}
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => exportToJSON(questionSet)}
-          className="flex items-center gap-1"
-        >
-          <FileText className="h-4 w-4" />
-          JSON
-        </Button>
-
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => exportToCSV(questionSet)}
-          className="flex items-center gap-1"
-        >
-          <Table className="h-4 w-4" />
-          CSV
-        </Button>
-
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => exportToPDF(questionSet)}
-          className="flex items-center gap-1"
-        >
-          <FileOutput className="h-4 w-4" />
-          PDF
-        </Button>
 
         {/* Exam Export Button */}
         <Button

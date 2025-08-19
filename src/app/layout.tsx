@@ -4,6 +4,7 @@ import "./globals.css";
 import { Toaster } from "react-hot-toast";
 import AuthProvider from "@/components/providers/auth-provider";
 import { LangProvider } from "@/components/providers/lang-provider";
+import { StatsProvider } from "@/components/providers/stats-provider";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -28,17 +29,19 @@ export default function RootLayout({
       >
         <LangProvider>
           <AuthProvider>
-            <div className="min-h-screen">{children}</div>
-            <Toaster
-              position="top-right"
-              toastOptions={{
-                duration: 4000,
-                style: {
-                  background: "#363636",
-                  color: "#fff",
-                },
-              }}
-            />
+            <StatsProvider>
+              <div className="min-h-screen">{children}</div>
+              <Toaster
+                position="top-right"
+                toastOptions={{
+                  duration: 4000,
+                  style: {
+                    background: "#363636",
+                    color: "#fff",
+                  },
+                }}
+              />
+            </StatsProvider>
           </AuthProvider>
         </LangProvider>
       </body>

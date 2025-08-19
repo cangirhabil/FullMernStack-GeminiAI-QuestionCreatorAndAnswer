@@ -2,7 +2,6 @@
 
 import React, { useEffect, useState } from "react";
 import { useAuth } from "@/components/providers/auth-provider";
-import { Spinner } from "@/components/ui/spinner";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useRouter } from "next/navigation";
@@ -104,7 +103,7 @@ export default function QuestionSetsPage() {
             </div>
             <h2 className="text-2xl font-bold text-gray-900 mb-3">No Question Sets Yet</h2>
             <p className="text-gray-600 mb-6 max-w-md mx-auto">
-              You haven't created any question sets yet. Upload a PDF document to get started with AI-powered question generation.
+              You haven&apos;t created any question sets yet. Upload a PDF document to get started with AI-powered question generation.
             </p>
             <Button 
               onClick={() => router.push('/')}

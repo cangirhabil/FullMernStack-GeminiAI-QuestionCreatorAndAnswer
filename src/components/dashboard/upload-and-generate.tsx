@@ -22,6 +22,7 @@ import { Spinner } from "@/components/ui/spinner";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { useLang } from "@/components/providers/lang-provider";
+import { useStats } from "@/components/providers/stats-provider";
 import { Upload, FileText, Zap, Settings, CheckCircle, AlertCircle } from "lucide-react";
 
 export function UploadAndGenerate() {
@@ -31,8 +32,11 @@ export function UploadAndGenerate() {
   const [numberOfQuestions, setNumberOfQuestions] = useState(10);
   const [uploading, setUploading] = useState(false);
   const [generating, setGenerating] = useState(false);
+  const [isDragOver, setIsDragOver] = useState(false);
+
   const router = useRouter();
   const { t } = useLang();
+  const { refreshStats } = useStats();
 
   const handleUpload = async () => {
     if (!file) return toast.error(t("ug_err_selectPdf"));
@@ -69,6 +73,10 @@ export function UploadAndGenerate() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || t("ug_err_generate"));
       toast.success(t("ug_success_ready"));
+      
+      // Refresh stats after successful generation
+      refreshStats();
+      
       router.push(`/questions/${data.questionSetId}`);
     } catch (err) {
       const message = err instanceof Error ? err.message : t("ug_err_generate");

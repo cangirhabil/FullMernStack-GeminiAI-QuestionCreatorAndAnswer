@@ -1,7 +1,6 @@
 "use client";
 
 import { AuthForm } from "@/components/auth/auth-form";
-import { Spinner } from "@/components/ui/spinner";
 import { useAuth } from "@/components/providers/auth-provider";
 import { UploadAndGenerate } from "@/components/dashboard/upload-and-generate";
 import { QuestionSetList } from "@/components/dashboard/question-set-list";
@@ -9,10 +8,20 @@ import { Button } from "@/components/ui/button";
 import { useLang } from "@/components/providers/lang-provider";
 import { LanguageSwitcher } from "@/components/ui/language-switcher";
 import { Brain, Sparkles, Zap, Shield } from "lucide-react";
+import { useEffect } from "react";
+import { useStats } from "@/components/providers/stats-provider";
 
 export default function Home() {
   const { user, loading, logout } = useAuth();
   const { t } = useLang();
+  const { stats, loading: statsLoading, refreshStats } = useStats();
+
+  // Fetch user statistics when user logs in
+  useEffect(() => {
+    if (user) {
+      refreshStats();
+    }
+  }, [user, refreshStats]);
 
   if (loading) {
     return (
@@ -214,20 +223,42 @@ export default function Home() {
               {/* Quick Stats */}
               <div className="bg-white rounded-2xl border border-gray-200/50 p-6 shadow-sm">
                 <h4 className="font-semibold text-gray-900 mb-4">Quick Stats</h4>
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <span className="text-gray-600 text-sm">Total Sessions</span>
-                    <span className="font-bold text-xl text-blue-600">-</span>
+                {statsLoading ? (
+                  <div className="flex items-center justify-center py-8">
+                    <div className="w-6 h-6 border-2 border-blue-200 border-t-blue-600 rounded-full animate-spin"></div>
                   </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-gray-600 text-sm">Questions Generated</span>
-                    <span className="font-bold text-xl text-green-600">-</span>
+                ) : (
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <span className="text-gray-600 text-sm">Total Sessions</span>
+                      <span className="font-bold text-xl text-blue-600">
+                        {stats.totalSessions.toLocaleString()}
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-gray-600 text-sm">Questions Generated</span>
+                      <span className="font-bold text-xl text-green-600">
+                        {stats.totalQuestions.toLocaleString()}
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-gray-600 text-sm">Documents Processed</span>
+                      <span className="font-bold text-xl text-purple-600">
+                        {stats.documentsProcessed.toLocaleString()}
+                      </span>
+                    </div>
+                    {stats.avgQuestionsPerSession > 0 && (
+                      <div className="pt-2 border-t border-gray-100">
+                        <div className="flex items-center justify-between">
+                          <span className="text-gray-600 text-sm">Avg. per Session</span>
+                          <span className="font-bold text-lg text-orange-600">
+                            {stats.avgQuestionsPerSession}
+                          </span>
+                        </div>
+                      </div>
+                    )}
                   </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-gray-600 text-sm">Documents Processed</span>
-                    <span className="font-bold text-xl text-purple-600">-</span>
-                  </div>
-                </div>
+                )}
               </div>
 
               {/* Tips */}
