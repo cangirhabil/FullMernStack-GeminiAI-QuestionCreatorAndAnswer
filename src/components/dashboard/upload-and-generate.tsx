@@ -22,6 +22,7 @@ import { Spinner } from "@/components/ui/spinner";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { useLang } from "@/components/providers/lang-provider";
+import { Upload, FileText, Zap, Settings, CheckCircle, AlertCircle } from "lucide-react";
 
 export function UploadAndGenerate() {
   const [file, setFile] = useState<File | null>(null);
@@ -78,83 +79,197 @@ export function UploadAndGenerate() {
   };
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>{t("ug_cardTitle")}</CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        <div className="space-y-1">
-          <Label>{t("ug_pdfFile")}</Label>
-          <Input
+    <div className="space-y-6">
+      {/* Step 1: Upload */}
+      <div className="space-y-4">
+        <div className="flex items-center gap-3">
+          <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${
+            file ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700'
+          }`}>
+            {file ? <CheckCircle className="w-4 h-4" /> : '1'}
+          </div>
+          <h3 className="font-semibold text-gray-900">Upload Document</h3>
+          {file && (
+            <div className="flex items-center gap-2 ml-auto">
+              <FileText className="w-4 h-4 text-green-600" />
+              <span className="text-sm text-green-600 font-medium">{file.name}</span>
+            </div>
+          )}
+        </div>
+
+        <div className="relative">
+          <input
             type="file"
             accept="application/pdf"
             onChange={(e) => setFile(e.target.files?.[0] || null)}
+            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+            id="file-upload"
           />
+          <label 
+            htmlFor="file-upload"
+            className={`
+              relative flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-xl cursor-pointer transition-all
+              ${file 
+                ? 'border-green-300 bg-green-50 hover:bg-green-100' 
+                : 'border-gray-300 bg-gray-50 hover:bg-gray-100 hover:border-gray-400'
+              }
+            `}
+          >
+            {file ? (
+              <div className="text-center">
+                <CheckCircle className="w-8 h-8 text-green-500 mx-auto mb-2" />
+                <p className="text-sm font-medium text-green-700">File uploaded successfully</p>
+                <p className="text-xs text-green-600">{file.name}</p>
+              </div>
+            ) : (
+              <div className="text-center">
+                <Upload className="w-8 h-8 text-gray-400 mx-auto mb-2" />
+                <p className="text-sm font-medium text-gray-700">Click to upload PDF</p>
+                <p className="text-xs text-gray-500">or drag and drop your file here</p>
+              </div>
+            )}
+          </label>
         </div>
-        <div className="flex gap-4 flex-wrap">
-          <div className="space-y-1 flex-1 min-w-[140px]">
-            <Label>{t("ug_difficulty")}</Label>
+      </div>
+
+      {/* Step 2: Configuration */}
+      <div className="space-y-4">
+        <div className="flex items-center gap-3">
+          <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${
+            file ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-400'
+          }`}>
+            <Settings className="w-4 h-4" />
+          </div>
+          <h3 className="font-semibold text-gray-900">Configure Generation</h3>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="space-y-2">
+            <Label className="text-sm font-medium text-gray-700">Difficulty Level</Label>
             <Select value={difficulty} onValueChange={setDifficulty}>
-              <SelectTrigger>
-                <SelectValue placeholder={t("ug_difficulty")} />
+              <SelectTrigger className="h-11 rounded-xl border-gray-200">
+                <SelectValue placeholder="Select difficulty" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="easy">{t("ug_difficulty_easy")}</SelectItem>
-                <SelectItem value="medium">
-                  {t("ug_difficulty_medium")}
+                <SelectItem value="easy" className="flex items-center gap-2">
+                  <span className="w-2 h-2 bg-green-500 rounded-full"></span>
+                  Easy
                 </SelectItem>
-                <SelectItem value="hard">{t("ug_difficulty_hard")}</SelectItem>
+                <SelectItem value="medium" className="flex items-center gap-2">
+                  <span className="w-2 h-2 bg-yellow-500 rounded-full"></span>
+                  Medium
+                </SelectItem>
+                <SelectItem value="hard" className="flex items-center gap-2">
+                  <span className="w-2 h-2 bg-red-500 rounded-full"></span>
+                  Hard
+                </SelectItem>
               </SelectContent>
             </Select>
           </div>
-          <div className="space-y-1 w-40">
-            <Label>{t("ug_questionCount")}</Label>
+
+          <div className="space-y-2">
+            <Label className="text-sm font-medium text-gray-700">Number of Questions</Label>
             <Input
               type="number"
               min={1}
               max={50}
               value={numberOfQuestions}
               onChange={(e) => setNumberOfQuestions(Number(e.target.value))}
+              className="h-11 rounded-xl border-gray-200"
+              placeholder="Enter number (1-50)"
             />
           </div>
         </div>
-        {documentId && (
-          <p className="text-xs text-muted-foreground">
-            {t("ug_uploadedPrefix")} {documentId}
-          </p>
+      </div>
+
+      {/* Step 3: Actions */}
+      <div className="space-y-4">
+        <div className="flex items-center gap-3">
+          <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${
+            documentId ? 'bg-green-100 text-green-700' : file ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-400'
+          }`}>
+            {documentId ? <CheckCircle className="w-4 h-4" /> : <Zap className="w-4 h-4" />}
+          </div>
+          <h3 className="font-semibold text-gray-900">Generate Questions</h3>
+          {documentId && (
+            <div className="flex items-center gap-2 ml-auto">
+              <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+              <span className="text-sm text-green-600 font-medium">Document processed</span>
+            </div>
+          )}
+        </div>
+
+        <div className="flex gap-3">
+          <Button
+            onClick={handleUpload}
+            disabled={!file || uploading || !!documentId}
+            className={`
+              flex-1 h-12 rounded-xl font-medium transition-all duration-200
+              ${!file || uploading || !!documentId 
+                ? 'bg-gray-100 text-gray-400 cursor-not-allowed' 
+                : 'bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white shadow-lg hover:shadow-xl'
+              }
+            `}
+          >
+            {uploading ? (
+              <>
+                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
+                Processing...
+              </>
+            ) : documentId ? (
+              <>
+                <CheckCircle className="w-4 h-4 mr-2" />
+                Uploaded
+              </>
+            ) : (
+              <>
+                <Upload className="w-4 h-4 mr-2" />
+                Upload & Process
+              </>
+            )}
+          </Button>
+
+          <Button
+            onClick={handleGenerate}
+            disabled={!documentId || generating}
+            className={`
+              flex-1 h-12 rounded-xl font-medium transition-all duration-200
+              ${!documentId || generating
+                ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                : 'bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 text-white shadow-lg hover:shadow-xl'
+              }
+            `}
+          >
+            {generating ? (
+              <>
+                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
+                Generating...
+              </>
+            ) : (
+              <>
+                <Zap className="w-4 h-4 mr-2" />
+                Generate Questions
+              </>
+            )}
+          </Button>
+        </div>
+
+        {documentId && !generating && (
+          <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
+            <div className="flex items-start gap-3">
+              <div className="w-5 h-5 bg-blue-100 rounded-full flex items-center justify-center mt-0.5">
+                <AlertCircle className="w-3 h-3 text-blue-600" />
+              </div>
+              <div>
+                <p className="text-sm font-medium text-blue-900">Ready to Generate</p>
+                <p className="text-xs text-blue-700 mt-1">
+                  Your document has been processed and is ready for AI question generation with Gemini 2.5 Flash.
+                </p>
+              </div>
+            </div>
+          </div>
         )}
-      </CardContent>
-      <CardFooter className="flex gap-2 flex-wrap">
-        <Button
-          type="button"
-          onClick={handleUpload}
-          disabled={!file || uploading || !!documentId}
-          className="flex-1 min-w-[140px]"
-        >
-          {uploading ? (
-            <>
-              <Spinner size={16} className="mr-2" /> {t("ug_uploading")}
-            </>
-          ) : (
-            t("ug_upload")
-          )}
-        </Button>
-        <Button
-          type="button"
-          variant="secondary"
-          onClick={handleGenerate}
-          disabled={!documentId || generating}
-          className="flex-1 min-w-[140px]"
-        >
-          {generating ? (
-            <>
-              <Spinner size={16} className="mr-2" /> {t("ug_generating")}
-            </>
-          ) : (
-            t("ug_generate")
-          )}
-        </Button>
-      </CardFooter>
-    </Card>
+      </div>
+    </div>
   );
 }

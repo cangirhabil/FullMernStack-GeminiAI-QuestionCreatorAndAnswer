@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { useLang } from "@/components/providers/lang-provider";
 import { useAuth } from "@/components/providers/auth-provider";
+import { FileText, Calendar, Hash, ExternalLink, Sparkles, Brain, Zap } from "lucide-react";
 
 interface QuestionSetSummary {
   _id: string;
@@ -91,61 +92,139 @@ export function QuestionSetList() {
   }, [authLoading, user, fetchQuestionSets]);
 
   return (
-    <Card>
-      <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle>{t("ql_recent")}</CardTitle>
+    <div className="space-y-4">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <h4 className="font-semibold text-gray-900">Recent Question Sets</h4>
         <Button
           variant="ghost"
           size="sm"
           onClick={() => fetchQuestionSets()}
           disabled={loading || authLoading || !user}
+          className="text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg"
         >
-          {t("refresh") || "↻"}
+          <Sparkles className="w-4 h-4 mr-2" />
+          {loading ? 'Refreshing...' : 'Refresh'}
         </Button>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        {loading && <Spinner />}
-        {!loading && questionSets.length === 0 && (
-          <p className="text-sm text-muted-foreground">{t("ql_none")}</p>
-        )}
-        <ul className="space-y-3">
-          {questionSets.slice(0, 5).map((qs) => (
-            <li
+      </div>
+
+      {/* Loading State */}
+      {loading && (
+        <div className="flex items-center justify-center py-12">
+          <div className="text-center space-y-3">
+            <div className="w-8 h-8 border-3 border-blue-200 border-t-blue-600 rounded-full animate-spin mx-auto"></div>
+            <p className="text-sm text-gray-600">Loading your question sets...</p>
+          </div>
+        </div>
+      )}
+
+      {/* Empty State */}
+      {!loading && questionSets.length === 0 && (
+        <div className="text-center py-12">
+          <div className="w-16 h-16 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+            <FileText className="w-8 h-8 text-gray-400" />
+          </div>
+          <h3 className="font-medium text-gray-900 mb-2">No question sets yet</h3>
+          <p className="text-sm text-gray-500 mb-4">
+            Upload a PDF document to generate your first set of intelligent questions.
+          </p>
+        </div>
+      )}
+
+      {/* Question Sets Grid */}
+      {!loading && questionSets.length > 0 && (
+        <div className="space-y-3">
+          {questionSets.slice(0, 5).map((qs, index) => (
+            <div
               key={qs._id}
-              className="flex items-center justify-between gap-2 border rounded p-3"
+              className="group relative bg-white border border-gray-200 rounded-xl p-4 hover:shadow-md hover:border-gray-300 transition-all duration-200 cursor-pointer"
+              onClick={() => router.push(`/questions/${qs._id}`)}
             >
-              <div>
-                <p className="font-medium text-sm">{qs.title}</p>
-                <p className="text-xs text-muted-foreground">
-                  {new Date(qs.createdAt).toLocaleString(locale)} •{" "}
-                  {qs.totalQuestions} {t("ql_questionsSuffix")}
-                </p>
+              {/* Content */}
+              <div className="flex items-start justify-between gap-4">
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-3 mb-2">
+                    <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg flex items-center justify-center flex-shrink-0">
+                      <Brain className="w-5 h-5 text-white" />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <h3 className="font-medium text-gray-900 truncate group-hover:text-blue-600 transition-colors">
+                        {qs.title}
+                      </h3>
+                      <div className="flex items-center gap-3 text-xs text-gray-500 mt-1">
+                        <span className="flex items-center gap-1">
+                          <Calendar className="w-3 h-3" />
+                          {new Date(qs.createdAt).toLocaleDateString(locale)}
+                        </span>
+                        <span className="flex items-center gap-1">
+                          <Hash className="w-3 h-3" />
+                          {qs.totalQuestions} questions
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Tags */}
+                  <div className="flex items-center gap-2 mt-3">
+                    <div className="inline-flex items-center gap-1 px-2 py-1 bg-blue-50 text-blue-700 text-xs font-medium rounded-md">
+                      <Zap className="w-3 h-3" />
+                      AI Generated
+                    </div>
+                    <div className="inline-flex items-center gap-1 px-2 py-1 bg-green-50 text-green-700 text-xs font-medium rounded-md">
+                      <Sparkles className="w-3 h-3" />
+                      RAG Enhanced
+                    </div>
+                  </div>
+                </div>
+
+                {/* Actions */}
+                <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      router.push(`/questions/${qs._id}`);
+                    }}
+                    className="h-8 px-3 text-xs hover:bg-blue-50 hover:text-blue-600 hover:border-blue-200"
+                  >
+                    <ExternalLink className="w-3 h-3 mr-1" />
+                    View
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      deleteQuestionSet(qs._id);
+                    }}
+                    className="h-8 px-3 text-xs hover:bg-red-50 hover:text-red-600 hover:border-red-200"
+                  >
+                    Delete
+                  </Button>
+                </div>
               </div>
-              <div className="flex gap-2">
-                <Button
-                  size="sm"
-                  variant="outline"
-                  onClick={() => router.push(`/questions/${qs._id}`)}
-                >
-                  {t("ql_view")}
-                </Button>
-                <Button
-                  size="sm"
-                  variant="destructive"
-                  onClick={() => deleteQuestionSet(qs._id)}
-                >
-                  {t("ql_delete")}
-                </Button>
-              </div>
-            </li>
+
+              {/* Hover Effect */}
+              <div className="absolute inset-0 rounded-xl ring-1 ring-transparent group-hover:ring-blue-200 transition-all pointer-events-none"></div>
+            </div>
           ))}
-        </ul>
-        {questionSets.length > 5 && (
-          <Button variant="secondary" onClick={() => router.push("/questions")}>
-            {t("ql_seeAll")}
-          </Button>
-        )}
-      </CardContent>
-    </Card>
+
+          {/* View All Button */}
+          {questionSets.length > 5 && (
+            <div className="pt-4">
+              <Button 
+                variant="outline" 
+                onClick={() => router.push("/questions")}
+                className="w-full h-11 rounded-xl border-dashed border-gray-300 hover:border-gray-400 hover:bg-gray-50 transition-colors"
+              >
+                <ExternalLink className="w-4 h-4 mr-2" />
+                View All Question Sets ({questionSets.length})
+              </Button>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
   );
 }

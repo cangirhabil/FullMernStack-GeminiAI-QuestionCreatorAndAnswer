@@ -243,11 +243,11 @@ export class RAGService {
     difficulty: string,
     filename: string
   ): Promise<Question[]> {
-    // Use Gemini 2.0 Flash for advanced question generation
+    // Use Gemini 2.5 Flash for advanced question generation
     let model;
     try {
       model = this.genAI.getGenerativeModel({ 
-        model: "gemini-2.0-flash-exp",
+        model: "gemini-2.5-flash",
         generationConfig: {
           temperature: 0.7,
           topP: 0.9,
@@ -255,9 +255,9 @@ export class RAGService {
           maxOutputTokens: 8192,
         }
       });
-      console.log("Using Gemini 2.0 Flash for question generation");
+      console.log("Using Gemini 2.5 Flash for question generation");
     } catch (error) {
-      console.warn("Gemini 2.0 Flash not available, falling back to Gemini 1.5 Flash:", error);
+      console.warn("Gemini 2.5 Flash not available, falling back to Gemini 1.5 Flash:", error);
       model = this.genAI.getGenerativeModel({ 
         model: "gemini-1.5-flash",
         generationConfig: {

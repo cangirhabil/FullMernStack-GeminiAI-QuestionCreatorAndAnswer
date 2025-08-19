@@ -8,6 +8,7 @@ import { QuestionSetList } from "@/components/dashboard/question-set-list";
 import { Button } from "@/components/ui/button";
 import { useLang } from "@/components/providers/lang-provider";
 import { LanguageSwitcher } from "@/components/ui/language-switcher";
+import { Brain, Sparkles, Zap, Shield } from "lucide-react";
 
 export default function Home() {
   const { user, loading, logout } = useAuth();
@@ -15,40 +16,234 @@ export default function Home() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Spinner />
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-white to-purple-50">
+        <div className="text-center space-y-4">
+          <div className="animate-spin w-12 h-12 border-4 border-blue-200 border-t-blue-600 rounded-full mx-auto"></div>
+          <p className="text-gray-600 font-medium">Loading your workspace...</p>
+        </div>
       </div>
     );
   }
 
   if (!user) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background to-muted p-4">
-        <AuthForm />
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+        {/* Hero Section */}
+        <div className="container mx-auto px-4 py-20">
+          <div className="max-w-6xl mx-auto">
+            <div className="text-center space-y-8 mb-16">
+              <div className="inline-flex items-center gap-2 bg-blue-100 text-blue-700 px-4 py-2 rounded-full text-sm font-medium">
+                <Sparkles className="w-4 h-4" />
+                Powered by Gemini 2.5 Flash
+              </div>
+              
+              <h1 className="text-5xl md:text-7xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-blue-800 bg-clip-text text-transparent leading-tight">
+                AI Question
+                <br />
+                Creator
+              </h1>
+              
+              <p className="text-xl md:text-2xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+                Transform your documents into intelligent interview questions with advanced AI. 
+                <span className="text-blue-600 font-semibold"> RAG-enhanced generation</span> for 
+                precision and relevance.
+              </p>
+            </div>
+
+            {/* Features Grid */}
+            <div className="grid md:grid-cols-3 gap-8 mb-16">
+              <div className="bg-white/70 backdrop-blur-sm rounded-2xl p-8 border border-gray-200 hover:shadow-xl transition-all duration-300">
+                <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-500 rounded-xl flex items-center justify-center mb-4">
+                  <Brain className="w-6 h-6 text-white" />
+                </div>
+                <h3 className="text-xl font-semibold mb-3">RAG Technology</h3>
+                <p className="text-gray-600">Advanced Retrieval-Augmented Generation for contextually aware questions from your documents.</p>
+              </div>
+
+              <div className="bg-white/70 backdrop-blur-sm rounded-2xl p-8 border border-gray-200 hover:shadow-xl transition-all duration-300">
+                <div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl flex items-center justify-center mb-4">
+                  <Zap className="w-6 h-6 text-white" />
+                </div>
+                <h3 className="text-xl font-semibold mb-3">Lightning Fast</h3>
+                <p className="text-gray-600">Gemini 2.5 Flash delivers intelligent questions in seconds with superior performance.</p>
+              </div>
+
+              <div className="bg-white/70 backdrop-blur-sm rounded-2xl p-8 border border-gray-200 hover:shadow-xl transition-all duration-300">
+                <div className="w-12 h-12 bg-gradient-to-r from-green-500 to-blue-500 rounded-xl flex items-center justify-center mb-4">
+                  <Shield className="w-6 h-6 text-white" />
+                </div>
+                <h3 className="text-xl font-semibold mb-3">Export Ready</h3>
+                <p className="text-gray-600">Professional formats: JSON, CSV, PDF, and exam-ready documents with custom branding.</p>
+              </div>
+            </div>
+
+            {/* Auth Form */}
+            <div className="max-w-md mx-auto">
+              <AuthForm />
+            </div>
+          </div>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <header className="border-b px-6 h-14 flex items-center justify-between bg-background/80 backdrop-blur">
-        <h1 className="font-semibold">{t("appTitle")}</h1>
-        <div className="flex items-center gap-3 text-sm">
-          <span className="hidden sm:inline text-muted-foreground">
-            {user.email}
-          </span>
-          <LanguageSwitcher />
-          <Button variant="outline" size="sm" onClick={logout}>
-            {t("logout")}
-          </Button>
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50">
+      {/* Modern Header */}
+      <header className="border-b border-gray-200/50 bg-white/80 backdrop-blur-xl sticky top-0 z-50">
+        <div className="container mx-auto px-6 h-16 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
+              <Brain className="w-5 h-5 text-white" />
+            </div>
+            <h1 className="text-xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent">
+              {t("appTitle")}
+            </h1>
+            <div className="hidden md:flex items-center gap-2 ml-4">
+              <div className="px-3 py-1 bg-blue-100 text-blue-700 text-xs font-medium rounded-full">
+                Gemini 2.5 Flash
+              </div>
+              <div className="px-3 py-1 bg-green-100 text-green-700 text-xs font-medium rounded-full">
+                RAG Enhanced
+              </div>
+            </div>
+          </div>
+          
+          <div className="flex items-center gap-4">
+            <div className="hidden lg:flex items-center gap-3 text-sm text-gray-600">
+              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+              <span className="font-medium">{user.email}</span>
+            </div>
+            <LanguageSwitcher />
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={logout}
+              className="hover:bg-red-50 hover:text-red-600 hover:border-red-200 transition-colors"
+            >
+              {t("logout")}
+            </Button>
+          </div>
         </div>
       </header>
-      <main className="flex-1 container mx-auto p-6 grid gap-6 md:grid-cols-3">
-        <div className="md:col-span-2 space-y-6">
-          <UploadAndGenerate />
-          <QuestionSetList />
+
+      {/* Main Content */}
+      <main className="container mx-auto p-6">
+        <div className="max-w-7xl mx-auto">
+          {/* Welcome Section */}
+          <div className="mb-8">
+            <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-3xl p-8 text-white relative overflow-hidden">
+              <div className="absolute inset-0 bg-black/10"></div>
+              <div className="relative z-10">
+                <h2 className="text-2xl md:text-3xl font-bold mb-2">
+                  Welcome back! 👋
+                </h2>
+                <p className="text-blue-100 text-lg">
+                  Ready to create intelligent questions? Upload your document and let AI do the magic.
+                </p>
+              </div>
+              <div className="absolute -right-8 -top-8 w-32 h-32 bg-white/10 rounded-full"></div>
+              <div className="absolute -right-4 -bottom-4 w-20 h-20 bg-white/5 rounded-full"></div>
+            </div>
+          </div>
+
+          {/* Dashboard Grid */}
+          <div className="grid lg:grid-cols-3 gap-8">
+            {/* Upload & Generate Section */}
+            <div className="lg:col-span-2 space-y-6">
+              <div className="bg-white rounded-2xl border border-gray-200/50 shadow-sm hover:shadow-lg transition-all duration-300">
+                <div className="p-6 border-b border-gray-100">
+                  <div className="flex items-center gap-3 mb-2">
+                    <div className="w-8 h-8 bg-gradient-to-r from-green-500 to-blue-500 rounded-lg flex items-center justify-center">
+                      <Zap className="w-4 h-4 text-white" />
+                    </div>
+                    <h3 className="text-lg font-semibold text-gray-900">Create Questions</h3>
+                  </div>
+                  <p className="text-gray-600 text-sm">Upload PDF documents and generate intelligent interview questions</p>
+                </div>
+                <div className="p-6">
+                  <UploadAndGenerate />
+                </div>
+              </div>
+
+              <div className="bg-white rounded-2xl border border-gray-200/50 shadow-sm hover:shadow-lg transition-all duration-300">
+                <div className="p-6 border-b border-gray-100">
+                  <div className="flex items-center gap-3 mb-2">
+                    <div className="w-8 h-8 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg flex items-center justify-center">
+                      <Brain className="w-4 h-4 text-white" />
+                    </div>
+                    <h3 className="text-lg font-semibold text-gray-900">Question Sets</h3>
+                  </div>
+                  <p className="text-gray-600 text-sm">Manage and export your generated question collections</p>
+                </div>
+                <div className="p-6">
+                  <QuestionSetList />
+                </div>
+              </div>
+            </div>
+
+            {/* Stats & Info Sidebar */}
+            <div className="space-y-6">
+              {/* AI Model Info */}
+              <div className="bg-gradient-to-br from-blue-50 to-purple-50 rounded-2xl p-6 border border-blue-200/50">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-500 rounded-xl flex items-center justify-center">
+                    <Sparkles className="w-5 h-5 text-white" />
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-gray-900">AI Engine</h4>
+                    <p className="text-sm text-gray-600">Gemini 2.5 Flash</p>
+                  </div>
+                </div>
+                <div className="space-y-3 text-sm">
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Processing Speed</span>
+                    <span className="font-medium text-green-600">Ultra Fast</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">RAG Technology</span>
+                    <span className="font-medium text-blue-600">Active</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Export Formats</span>
+                    <span className="font-medium text-purple-600">4 Types</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Quick Stats */}
+              <div className="bg-white rounded-2xl border border-gray-200/50 p-6 shadow-sm">
+                <h4 className="font-semibold text-gray-900 mb-4">Quick Stats</h4>
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <span className="text-gray-600 text-sm">Total Sessions</span>
+                    <span className="font-bold text-xl text-blue-600">-</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-gray-600 text-sm">Questions Generated</span>
+                    <span className="font-bold text-xl text-green-600">-</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-gray-600 text-sm">Documents Processed</span>
+                    <span className="font-bold text-xl text-purple-600">-</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Tips */}
+              <div className="bg-gradient-to-br from-yellow-50 to-orange-50 rounded-2xl p-6 border border-yellow-200/50">
+                <h4 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
+                  💡 Pro Tips
+                </h4>
+                <ul className="space-y-2 text-sm text-gray-700">
+                  <li>• Upload clear, well-formatted PDFs for best results</li>
+                  <li>• Use the exam export for professional formats</li>
+                  <li>• RAG technology works best with longer documents</li>
+                </ul>
+              </div>
+            </div>
+          </div>
         </div>
-       
       </main>
     </div>
   );

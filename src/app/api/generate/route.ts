@@ -119,11 +119,11 @@ export async function POST(request: NextRequest) {
     } catch (ragError) {
       console.error("RAG generation failed, falling back to simple generation:", ragError);
       
-      // Fallback to simple generation if RAG fails - use Gemini 2.0 Flash
+      // Fallback to simple generation if RAG fails - use Gemini 2.5 Flash
       let model;
       try {
         model = genAI.getGenerativeModel({ 
-          model: "gemini-2.0-flash-exp",
+          model: "gemini-2.5-flash",
           generationConfig: {
             temperature: 0.7,
             topP: 0.9,
@@ -131,9 +131,9 @@ export async function POST(request: NextRequest) {
             maxOutputTokens: 8192,
           }
         });
-        console.log("Using Gemini 2.0 Flash for fallback generation");
+        console.log("Using Gemini 2.5 Flash for fallback generation");
       } catch (error) {
-        console.warn("Gemini 2.0 Flash not available, using Gemini 1.5 Flash:", error);
+        console.warn("Gemini 2.5 Flash not available, using Gemini 1.5 Flash:", error);
         model = genAI.getGenerativeModel({ 
           model: "gemini-1.5-flash",
           generationConfig: {
@@ -221,11 +221,11 @@ Make sure to:
         industry_relevance: q.industry_relevance || "General application"
       })),
       metadata: {
-        generationMethod: 'RAG-enhanced with Gemini 2.0 Flash',
+        generationMethod: 'RAG-enhanced with Gemini 2.5 Flash',
         documentLength: textContent.length,
         generatedAt: new Date(),
         ragEnabled: true,
-        aiModel: 'gemini-2.0-flash-exp'
+        aiModel: 'gemini-2.5-flash'
       }
     });
 
