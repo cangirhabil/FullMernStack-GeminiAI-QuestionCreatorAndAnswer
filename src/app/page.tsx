@@ -4,7 +4,8 @@ import { AuthForm } from "@/components/auth/auth-form";
 import { useAuth } from "@/components/providers/auth-provider";
 import { UploadAndGenerate } from "@/components/dashboard/upload-and-generate";
 import { QuestionSetList } from "@/components/dashboard/question-set-list";
-import { Button } from "@/components/ui/button";
+import { UserMenu } from "@/components/ui/user-menu";
+import { ApiKeyWarning } from "@/components/ui/api-key-warning";
 import { useLang } from "@/components/providers/lang-provider";
 import { LanguageSwitcher } from "@/components/ui/language-switcher";
 import { Brain, Sparkles, Zap, Shield } from "lucide-react";
@@ -12,7 +13,7 @@ import { useEffect } from "react";
 import { useStats } from "@/components/providers/stats-provider";
 
 export default function Home() {
-  const { user, loading, logout } = useAuth();
+  const { user, loading } = useAuth();
   const { t } = useLang();
   const { stats, loading: statsLoading, refreshStats } = useStats();
 
@@ -116,25 +117,16 @@ export default function Home() {
           </div>
           
           <div className="flex items-center gap-2 sm:gap-4">
-            <div className="hidden md:flex items-center gap-3 text-sm text-gray-600">
-              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-              <span className="font-medium truncate max-w-[150px] lg:max-w-none">{user.email}</span>
-            </div>
             <LanguageSwitcher />
-            <Button 
-              variant="outline" 
-              size="sm" 
-              onClick={logout}
-              className="hover:bg-red-50 hover:text-red-600 hover:border-red-200 transition-colors text-xs sm:text-sm"
-            >
-              {t("logout")}
-            </Button>
+            <UserMenu />
           </div>
         </div>
       </header>
 
       {/* Main Content */}
   <main className="container mx-auto p-4 sm:p-6">
+        {/* API Key warning (only shown if key missing) */}
+        <ApiKeyWarning />
         <div className="max-w-10xl mx-auto">
           {/* Welcome Section */}
           <div className="mb-6 sm:mb-8">

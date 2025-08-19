@@ -56,3 +56,5 @@ export function useLang() {
   if (!ctx) throw new Error("useLang must be used within LangProvider");
   return ctx;
 }
+
+export const useLanguage = useLang;

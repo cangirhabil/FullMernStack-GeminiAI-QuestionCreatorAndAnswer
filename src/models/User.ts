@@ -7,6 +7,7 @@ export interface IUser extends Document {
   image?: string;
   provider?: string;
   providerId?: string;
+  geminiApiKey?: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -36,6 +37,10 @@ const UserSchema = new Schema<IUser>(
     },
     providerId: {
       type: String,
+    },
+    geminiApiKey: {
+      type: String,
+      select: false,
     },
   },
   {

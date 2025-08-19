@@ -9,8 +9,10 @@ export {
   QuestionSet
 };
 
-export default {
+const models = {
   User,
   Document,
   QuestionSet
 };
+
+export default models;

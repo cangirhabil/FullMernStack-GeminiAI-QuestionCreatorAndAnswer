@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import connectToDatabase from "@/lib/mongodb";
-import { QuestionSet, Document } from "@/models";
+import { QuestionSet } from "@/models";
 import { verifyToken } from "@/lib/auth";
 
 export async function GET(request: NextRequest) {

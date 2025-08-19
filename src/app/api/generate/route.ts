@@ -3,13 +3,12 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 import { readFile } from "fs/promises";
 import connectToDatabase from "@/lib/mongodb";
 import { Document, QuestionSet } from "@/models";
+import User from "@/models/User";
 import { IDocument } from "@/models/Document";
 import { verifyToken } from "@/lib/auth";
 import RAGService from "@/lib/rag";
 import DocumentParser from "@/lib/document-parser";
-import { withRetry, isRateLimitError } from "@/lib/rate-limit-utils";
-
-const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY!);
+import { withRetry } from "@/lib/rate-limit-utils";
 
 export async function POST(request: NextRequest) {
   try {
@@ -19,13 +18,58 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    await connectToDatabase();
+
+    // Get user and check for API key (unless a test key header is provided)
+    const testHeaderKey = request.headers.get('x-test-api-key') || undefined;
+
+    const user = await User.findById(userId).select('+geminiApiKey');
+    if (!user) {
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
+    }
+
+  if (!user.geminiApiKey && !testHeaderKey) {
+      return NextResponse.json(
+        { 
+          error: "API key required",
+          message: "Please add your Gemini API key in your profile settings to generate questions."
+        },
+        { status: 400 }
+      );
+    }
+
+  // Use provided test header key if present, else user's key
+  const effectiveKey = testHeaderKey || user.geminiApiKey;
+  const userGenAI = new GoogleGenerativeAI(effectiveKey);
+
+    const body = await request.json();
     const {
       documentId,
       numberOfQuestions = 10,
       difficulty = "medium",
-    } = await request.json();
+      dryRun = false,
+      mode,
+    } = body;
 
-    if (!documentId) {
+    // Fast path: API key validation dry run (no DB question set persist)
+    if (dryRun || mode === 'validation') {
+      try {
+        const model = userGenAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
+        const testPrompt = `Return the word OK only.`;
+        const result = await withRetry(async () => await model.generateContent(testPrompt), 2, 500);
+        const text = result.response.text().trim();
+        if (/^OK$/i.test(text)) {
+          return NextResponse.json({ valid: true, message: 'Key valid' });
+        }
+        return NextResponse.json({ valid: true, message: 'Model responded' });
+      } catch (e) {
+        const error = e as { status?: number; message?: string };
+        const status = error.status || 400;
+        return NextResponse.json({ valid: false, error: 'Key test failed', detail: error.message }, { status });
+      }
+    }
+
+  if (!documentId) {
       return NextResponse.json(
         { error: "Document ID is required" },
         { status: 400 }
@@ -102,7 +146,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Initialize RAG service and generate questions
-    const ragService = new RAGService(process.env.GOOGLE_API_KEY!);
+    const ragService = new RAGService(user.geminiApiKey);
     
     let questions;
     try {
@@ -122,7 +166,7 @@ export async function POST(request: NextRequest) {
       // Fallback to simple generation if RAG fails - use Gemini 2.5 Flash
       let model;
       try {
-        model = genAI.getGenerativeModel({ 
+        model = userGenAI.getGenerativeModel({ 
           model: "gemini-2.5-flash",
           generationConfig: {
             temperature: 0.7,
@@ -134,7 +178,7 @@ export async function POST(request: NextRequest) {
         console.log("Using Gemini 2.5 Flash for fallback generation");
       } catch (error) {
         console.warn("Gemini 2.5 Flash not available, using Gemini 1.5 Flash:", error);
-        model = genAI.getGenerativeModel({ 
+        model = userGenAI.getGenerativeModel({ 
           model: "gemini-1.5-flash",
           generationConfig: {
             temperature: 0.7,

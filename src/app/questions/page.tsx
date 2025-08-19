@@ -130,7 +130,7 @@ export default function QuestionsPage() {
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5 md:gap-6">
-              {data.map((qs, index) => (
+              {data.map((qs) => (
                 <Card 
                   key={qs._id} 
                   className="group hover:shadow-xl transition-all duration-300 cursor-pointer border-gray-200/50 bg-white/90 backdrop-blur-sm"

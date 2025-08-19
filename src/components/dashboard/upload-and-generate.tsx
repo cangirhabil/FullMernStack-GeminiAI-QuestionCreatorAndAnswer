@@ -2,13 +2,6 @@
 
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardContent,
-  CardFooter,
-} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -18,12 +11,12 @@ import {
   SelectItem,
   SelectValue,
 } from "@/components/ui/select";
-import { Spinner } from "@/components/ui/spinner";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { useLang } from "@/components/providers/lang-provider";
 import { useStats } from "@/components/providers/stats-provider";
 import { Upload, FileText, Zap, Settings, CheckCircle, AlertCircle } from "lucide-react";
+import { ErrorDialog, type ErrorDialogProps } from "@/components/ui/error-dialog";
 
 export function UploadAndGenerate() {
   const [file, setFile] = useState<File | null>(null);
@@ -32,7 +25,13 @@ export function UploadAndGenerate() {
   const [numberOfQuestions, setNumberOfQuestions] = useState(10);
   const [uploading, setUploading] = useState(false);
   const [generating, setGenerating] = useState(false);
-  const [isDragOver, setIsDragOver] = useState(false);
+  const [errorDialog, setErrorDialog] = useState<{
+    isOpen: boolean;
+    type: ErrorDialogProps['errorType'];
+  }>({
+    isOpen: false,
+    type: 'unknown'
+  });
 
   const router = useRouter();
   const { t } = useLang();
@@ -71,16 +70,40 @@ export function UploadAndGenerate() {
         body: JSON.stringify({ documentId, numberOfQuestions, difficulty }),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || t("ug_err_generate"));
+      if (!res.ok) {
+        // Parse specific error types and show appropriate dialog
+        const errorMessage = data.error || t("ug_err_generate");
+        let errorType: ErrorDialogProps['errorType'] = 'unknown';
+        
+        if (errorMessage.includes('API key') || errorMessage.includes('api key') || 
+            errorMessage.includes('GEMINI_API_KEY') || errorMessage.includes('Invalid API')) {
+          errorType = 'apiKey';
+        } else if (errorMessage.includes('rate limit') || errorMessage.includes('quota') || 
+                   errorMessage.includes('429')) {
+          errorType = 'rateLimit';
+        } else if (errorMessage.includes('document') || errorMessage.includes('parsing') || 
+                   errorMessage.includes('PDF')) {
+          errorType = 'document';
+        } else if (errorMessage.includes('network') || errorMessage.includes('connection') || 
+                   errorMessage.includes('timeout')) {
+          errorType = 'network';
+        } else if (errorMessage.includes('server') || errorMessage.includes('500') || 
+                   errorMessage.includes('503')) {
+          errorType = 'server';
+        }
+        
+        setErrorDialog({ isOpen: true, type: errorType });
+        return;
+      }
       toast.success(t("ug_success_ready"));
       
       // Refresh stats after successful generation
       refreshStats();
       
       router.push(`/questions/${data.questionSetId}`);
-    } catch (err) {
-      const message = err instanceof Error ? err.message : t("ug_err_generate");
-      toast.error(message);
+    } catch {
+      // Handle network/fetch errors
+      setErrorDialog({ isOpen: true, type: 'network' });
     } finally {
       setGenerating(false);
     }
@@ -278,6 +301,16 @@ export function UploadAndGenerate() {
           </div>
         )}
       </div>
+
+      <ErrorDialog
+        isOpen={errorDialog.isOpen}
+        onOpenChange={(open) => setErrorDialog(prev => ({ ...prev, isOpen: open }))}
+        errorType={errorDialog.type}
+        onRetry={() => {
+          setErrorDialog({ isOpen: false, type: 'unknown' });
+          handleGenerate();
+        }}
+      />
     </div>
   );
 }

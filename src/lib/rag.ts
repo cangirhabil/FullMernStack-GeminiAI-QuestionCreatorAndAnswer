@@ -1,5 +1,4 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
-import { withRetry, isRateLimitError } from './rate-limit-utils';
 
 interface DocumentChunk {
   id: string;
@@ -159,8 +158,6 @@ export class RAGService {
     if (text.length <= chunkSize) {
       return [text.trim()];
     }
-    
-    const sentences = text.split(/[.!?]+/).filter(s => s.trim().length > 0);
     
     let start = 0;
     let iterations = 0;

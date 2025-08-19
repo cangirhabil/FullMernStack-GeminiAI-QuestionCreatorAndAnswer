@@ -1,9 +1,7 @@
 "use client";
 
 import React, { useEffect, useState, useCallback } from "react";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Spinner } from "@/components/ui/spinner";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { useLang } from "@/components/providers/lang-provider";
@@ -134,7 +132,7 @@ export function QuestionSetList() {
       {/* Question Sets Grid */}
       {!loading && questionSets.length > 0 && (
         <div className="space-y-3">
-          {questionSets.slice(0, 5).map((qs, index) => (
+          {questionSets.slice(0, 5).map((qs) => (
             <div
               key={qs._id}
               className="group relative bg-white border border-gray-200 rounded-xl p-4 hover:shadow-md hover:border-gray-300 transition-all duration-200 cursor-pointer"
