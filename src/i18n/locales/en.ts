@@ -4,6 +4,17 @@ export const en = {
   noteTitle: "Note",
   noteBody:
     "For persistent file storage on Vercel you need an external object storage (S3 etc.). Current demo uses local disk.",
+  
+  // Common
+  loading: "Loading...",
+  back: "Back",
+  yes: "Yes",
+  no: "No",
+  cancel: "Cancel",
+  confirm: "Confirm",
+  error: "Error",
+  success: "Success",
+  
   // Auth
   auth_loginTitle: "Sign In",
   auth_registerTitle: "Register",
@@ -15,6 +26,42 @@ export const en = {
   auth_register: "Register",
   auth_noAccountRegister: "No account? Register",
   auth_haveAccountLogin: "Have an account? Sign in",
+  auth_required: "Authentication Required",
+  auth_requiredDesc: "Please log in to access your question sets.",
+  
+  // Homepage Hero
+  hero_poweredBy: "Powered by Gemini 2.5 Flash",
+  hero_title: "AI Question Creator",
+  hero_subtitle: "Transform your documents into intelligent interview questions with advanced AI.",
+  hero_ragEnhanced: "RAG-enhanced generation",
+  hero_subtitle2: "for precision and relevance.",
+  hero_feature1Title: "RAG Technology",
+  hero_feature1Desc: "Advanced Retrieval-Augmented Generation for contextually aware questions from your documents.",
+  hero_feature2Title: "Lightning Fast",
+  hero_feature2Desc: "Gemini 2.5 Flash delivers intelligent questions in seconds with superior performance.",
+  hero_feature3Title: "Export Ready",
+  hero_feature3Desc: "Professional formats: JSON, CSV, PDF, and exam-ready documents with custom branding.",
+  
+  // Dashboard
+  dashboard_welcome: "Welcome back! 👋",
+  dashboard_welcomeDesc: "Ready to create intelligent questions? Upload your document and let AI do the magic.",
+  dashboard_createTitle: "Create Questions",
+  dashboard_createDesc: "Upload PDF documents and generate intelligent interview questions",
+  dashboard_questionSetsTitle: "Question Sets",
+  dashboard_questionSetsDesc: "Manage and export your generated question collections",
+  dashboard_aiEngine: "AI Engine",
+  dashboard_processingSpeed: "Processing Speed",
+  dashboard_ultraFast: "Ultra Fast",
+  dashboard_ragTechnology: "RAG Technology",
+  dashboard_active: "Active",
+  dashboard_exportFormats: "Export Formats",
+  dashboard_fourTypes: "4 Types",
+  dashboard_quickStats: "Quick Stats",
+  dashboard_proTips: "💡 Pro Tips",
+  dashboard_tip1: "• Upload clear, well-formatted PDFs for best results",
+  dashboard_tip2: "• Use the exam export for professional formats",
+  dashboard_tip3: "• RAG technology works best with longer documents",
+  
   // Upload & Generate
   ug_cardTitle: "Upload PDF & Generate Questions",
   ug_pdfFile: "PDF File",
@@ -35,6 +82,23 @@ export const en = {
   ug_err_needUpload: "Upload a file first",
   ug_err_generate: "Generation error",
   ug_success_ready: "Questions ready",
+  ug_step1: "Upload Document",
+  ug_step2: "Configure Settings",
+  ug_step3: "Generate Questions",
+  ug_uploadSuccess: "File uploaded successfully",
+  ug_dragDrop: "Drag & drop your PDF here, or",
+  ug_browse: "browse",
+  ug_aiGenerated: "AI Generated",
+  ug_ragEnhanced: "RAG Enhanced",
+  
+  // Stats
+  stats_totalSessions: "Total Sessions",
+  stats_questionsGenerated: "Questions Generated",
+  stats_documentsProcessed: "Documents Processed",
+  stats_avgPerSession: "Avg. per Session",
+  stats_loadingStats: "Loading your question sets...",
+  stats_loadingWorkspace: "Loading your workspace...",
+  
   // Question Set List
   ql_recent: "Recent Question Sets",
   ql_none: "No question sets yet.",
@@ -46,6 +110,34 @@ export const en = {
   ql_fetchFailed: "Failed to fetch question sets",
   ql_seeAll: "See All",
   ql_questionsSuffix: "questions",
+  ql_viewDetails: "View Details",
+  ql_aiGeneratedWithModel: "AI-generated with Gemini 2.5 Flash",
+  
+  // Questions Page
+  questions_title: "All Question Sets",
+  questions_subtitle: "Manage your AI-generated question collections",
+  questions_noSetsTitle: "No Question Sets Yet",
+  questions_noSetsDesc: "You haven't created any question sets yet. Upload a PDF document to get started with AI-powered question generation.",
+  questions_createFirstSet: "Create Your First Set",
+  questions_yourSets: "Your Question Sets",
+  questions_count: "questions",
+  
+  // Question Detail Page
+  questionDetail_title: "Question Set Details",
+  questionDetail_generatedWith: "Generated with",
+  questionDetail_totalQuestions: "Total Questions",
+  questionDetail_difficulty: "Difficulty Level",
+  questionDetail_createdAt: "Created At",
+  questionDetail_documentName: "Source Document",
+  questionDetail_exportOptions: "Export Options",
+  questionDetail_downloadJson: "Download JSON",
+  questionDetail_downloadCsv: "Download CSV",
+  questionDetail_downloadPdf: "Download PDF",
+  questionDetail_examMode: "Exam Mode",
+  questionDetail_answer: "Answer",
+  questionDetail_showAnswer: "Show Answer",
+  questionDetail_hideAnswer: "Hide Answer",
+  
   refresh: "Refresh",
 };
 export type EnDict = typeof en;

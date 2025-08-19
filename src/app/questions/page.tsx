@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { useAuth } from "@/components/providers/auth-provider";
+import { useLang } from "@/components/providers/lang-provider";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useRouter } from "next/navigation";
@@ -14,11 +15,12 @@ interface QuestionSetSummary {
   createdAt: string;
 }
 
-export default function QuestionSetsPage() {
+export default function QuestionsPage() {
   const { user, loading } = useAuth();
-  const [data, setData] = useState<QuestionSetSummary[]>([]);
-  const [fetching, setFetching] = useState(false);
+  const { t } = useLang();
   const router = useRouter();
+  const [data, setData] = useState<QuestionSetSummary[]>([]);
+  const [fetching, setFetching] = useState(true);
 
   useEffect(() => {
     if (!loading && user) {
@@ -40,7 +42,7 @@ export default function QuestionSetsPage() {
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50 flex items-center justify-center">
         <div className="text-center space-y-4">
           <div className="w-12 h-12 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin mx-auto"></div>
-          <p className="text-gray-600 font-medium">Loading your question sets...</p>
+          <p className="text-gray-600 font-medium">{t("stats_loadingStats")}</p>
         </div>
       </div>
     );
@@ -52,8 +54,8 @@ export default function QuestionSetsPage() {
           <div className="w-16 h-16 bg-red-100 rounded-2xl flex items-center justify-center mx-auto">
             <Brain className="w-8 h-8 text-red-600" />
           </div>
-          <h2 className="text-xl font-bold text-gray-900">Authentication Required</h2>
-          <p className="text-gray-600">Please log in to access your question sets.</p>
+          <h2 className="text-xl font-bold text-gray-900">{t("auth_required")}</h2>
+          <p className="text-gray-600">{t("auth_requiredDesc")}</p>
         </div>
       </div>
     );
@@ -71,13 +73,13 @@ export default function QuestionSetsPage() {
               className="hover:bg-gray-100 rounded-lg"
             >
               <ArrowLeft className="w-4 h-4 mr-2" />
-              Back
+              {t("back")}
             </Button>
             <div>
               <h1 className="text-2xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent">
-                All Question Sets
+                {t("questions_title")}
               </h1>
-              <p className="text-gray-600 text-sm">Manage your AI-generated question collections</p>
+              <p className="text-gray-600 text-sm">{t("questions_subtitle")}</p>
             </div>
           </div>
         </div>
@@ -90,7 +92,7 @@ export default function QuestionSetsPage() {
           <div className="flex items-center justify-center py-20">
             <div className="text-center space-y-4">
               <div className="w-8 h-8 border-3 border-blue-200 border-t-blue-600 rounded-full animate-spin mx-auto"></div>
-              <p className="text-gray-600">Loading question sets...</p>
+              <p className="text-gray-600">{t("loading")}</p>
             </div>
           </div>
         )}
@@ -101,16 +103,16 @@ export default function QuestionSetsPage() {
             <div className="w-20 h-20 bg-gray-100 rounded-3xl flex items-center justify-center mx-auto mb-6">
               <FileText className="w-10 h-10 text-gray-400" />
             </div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-3">No Question Sets Yet</h2>
+            <h2 className="text-2xl font-bold text-gray-900 mb-3">{t("questions_noSetsTitle")}</h2>
             <p className="text-gray-600 mb-6 max-w-md mx-auto">
-              You haven&apos;t created any question sets yet. Upload a PDF document to get started with AI-powered question generation.
+              {t("questions_noSetsDesc")}
             </p>
             <Button 
               onClick={() => router.push('/')}
               className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white"
             >
               <Sparkles className="w-4 h-4 mr-2" />
-              Create Your First Set
+              {t("questions_createFirstSet")}
             </Button>
           </div>
         )}
@@ -121,9 +123,9 @@ export default function QuestionSetsPage() {
             <div className="flex items-center justify-between">
               <div>
                 <h2 className="text-lg font-semibold text-gray-900">
-                  Your Question Sets ({data.length})
+                  {t("questions_yourSets")} ({data.length})
                 </h2>
-                <p className="text-sm text-gray-600">AI-generated with Gemini 2.5 Flash</p>
+                <p className="text-sm text-gray-600">{t("ql_aiGeneratedWithModel")}</p>
               </div>
             </div>
 
@@ -150,7 +152,7 @@ export default function QuestionSetsPage() {
                           </span>
                           <span className="flex items-center gap-1">
                             <Hash className="w-3 h-3" />
-                            {qs.totalQuestions} questions
+                            {qs.totalQuestions} {t("questions_count")}
                           </span>
                         </div>
                       </div>
@@ -162,11 +164,11 @@ export default function QuestionSetsPage() {
                     <div className="flex items-center gap-2">
                       <div className="inline-flex items-center gap-1 px-2 py-1 bg-blue-50 text-blue-700 text-xs font-medium rounded-md">
                         <Zap className="w-3 h-3" />
-                        AI Generated
+                        {t("ug_aiGenerated")}
                       </div>
                       <div className="inline-flex items-center gap-1 px-2 py-1 bg-green-50 text-green-700 text-xs font-medium rounded-md">
                         <Sparkles className="w-3 h-3" />
-                        RAG Enhanced
+                        {t("ug_ragEnhanced")}
                       </div>
                     </div>
 
@@ -180,7 +182,7 @@ export default function QuestionSetsPage() {
                       }}
                     >
                       <ExternalLink className="w-4 h-4 mr-2" />
-                      View Details
+                      {t("ql_viewDetails")}
                     </Button>
                   </CardContent>
                 </Card>

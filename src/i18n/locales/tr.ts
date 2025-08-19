@@ -1,9 +1,20 @@
 export const tr = {
-  appTitle: "Interview Question Creator",
+  appTitle: "AI Soru Üretici",
   logout: "Çıkış",
   noteTitle: "Not",
   noteBody:
     "Vercel üzerinde kalıcı dosya depolama için harici bir object storage (S3 vb.) yapılandırılmalıdır. Şu anki demo local disk kullanır.",
+  
+  // Common
+  loading: "Yükleniyor...",
+  back: "Geri",
+  yes: "Evet",
+  no: "Hayır",
+  cancel: "İptal",
+  confirm: "Onayla",
+  error: "Hata",
+  success: "Başarılı",
+  
   // Auth
   auth_loginTitle: "Giriş Yap",
   auth_registerTitle: "Kayıt Ol",
@@ -15,6 +26,42 @@ export const tr = {
   auth_register: "Kayıt Ol",
   auth_noAccountRegister: "Hesabın yok mu? Kayıt ol",
   auth_haveAccountLogin: "Hesabın var mı? Giriş yap",
+  auth_required: "Kimlik Doğrulama Gerekli",
+  auth_requiredDesc: "Soru setlerinize erişmek için lütfen giriş yapın.",
+  
+  // Homepage Hero
+  hero_poweredBy: "Gemini 2.5 Flash Tarafından Desteklenmektedir",
+  hero_title: "AI Soru Üretici",
+  hero_subtitle: "Gelişmiş AI ile belgelerinizi akıllı mülakat sorularına dönüştürün.",
+  hero_ragEnhanced: "RAG-geliştirilmiş üretim",
+  hero_subtitle2: "kesinlik ve uygunluk için.",
+  hero_feature1Title: "RAG Teknolojisi",
+  hero_feature1Desc: "Belgelerinizden bağlamsal olarak farkında sorular için gelişmiş Retrieval-Augmented Generation.",
+  hero_feature2Title: "Şimşek Hızında",
+  hero_feature2Desc: "Gemini 2.5 Flash üstün performansla saniyeler içinde akıllı sorular sunar.",
+  hero_feature3Title: "Dışa Aktarım Hazır",
+  hero_feature3Desc: "Profesyonel formatlar: JSON, CSV, PDF ve özel markalı sınava hazır belgeler.",
+  
+  // Dashboard
+  dashboard_welcome: "Tekrar hoş geldin! 👋",
+  dashboard_welcomeDesc: "Akıllı sorular oluşturmaya hazır mısın? Belgenizi yükleyin ve AI'nin büyüsünü izleyin.",
+  dashboard_createTitle: "Soru Oluştur",
+  dashboard_createDesc: "PDF belgeler yükleyin ve akıllı mülakat soruları oluşturun",
+  dashboard_questionSetsTitle: "Soru Setleri",
+  dashboard_questionSetsDesc: "Oluşturulan soru koleksiyonlarınızı yönetin ve dışa aktarın",
+  dashboard_aiEngine: "AI Motoru",
+  dashboard_processingSpeed: "İşleme Hızı",
+  dashboard_ultraFast: "Ultra Hızlı",
+  dashboard_ragTechnology: "RAG Teknolojisi",
+  dashboard_active: "Aktif",
+  dashboard_exportFormats: "Dışa Aktarım Formatları",
+  dashboard_fourTypes: "4 Tür",
+  dashboard_quickStats: "Hızlı İstatistikler",
+  dashboard_proTips: "💡 Pro İpuçları",
+  dashboard_tip1: "• En iyi sonuçlar için açık, iyi biçimlendirilmiş PDF'ler yükleyin",
+  dashboard_tip2: "• Profesyonel formatlar için sınav dışa aktarımını kullanın",
+  dashboard_tip3: "• RAG teknolojisi daha uzun belgelerle en iyi şekilde çalışır",
+  
   // Upload & Generate
   ug_cardTitle: "PDF Yükle ve Soru Oluştur",
   ug_pdfFile: "PDF Dosyası",
@@ -35,6 +82,23 @@ export const tr = {
   ug_err_needUpload: "Önce dosya yükleyin",
   ug_err_generate: "Oluşturma hatası",
   ug_success_ready: "Sorular hazır",
+  ug_step1: "Belge Yükle",
+  ug_step2: "Ayarları Yapılandır",
+  ug_step3: "Soruları Oluştur",
+  ug_uploadSuccess: "Dosya başarıyla yüklendi",
+  ug_dragDrop: "PDF'nizi buraya sürükleyip bırakın veya",
+  ug_browse: "dosya seçin",
+  ug_aiGenerated: "AI Üretildi",
+  ug_ragEnhanced: "RAG Geliştirildi",
+  
+  // Stats
+  stats_totalSessions: "Toplam Oturum",
+  stats_questionsGenerated: "Üretilen Sorular",
+  stats_documentsProcessed: "İşlenen Belgeler",
+  stats_avgPerSession: "Oturum Başına Ort.",
+  stats_loadingStats: "Soru setleriniz yükleniyor...",
+  stats_loadingWorkspace: "Çalışma alanınız yükleniyor...",
+  
   // Question Set List
   ql_recent: "Son Soru Setleri",
   ql_none: "Henüz soru seti yok.",
@@ -46,6 +110,35 @@ export const tr = {
   ql_fetchFailed: "Soru setleri alınamadı",
   ql_seeAll: "Tümünü Gör",
   ql_questionsSuffix: "soru",
+  ql_viewDetails: "Detayları Görüntüle",
+  ql_aiGeneratedWithModel: "Gemini 2.5 Flash ile AI-üretildi",
+  
+  // Questions Page
+  questions_title: "Tüm Soru Setleri",
+  questions_subtitle: "AI-üretilmiş soru koleksiyonlarınızı yönetin",
+  questions_noSetsTitle: "Henüz Soru Seti Yok",
+  questions_noSetsDesc: "Henüz hiç soru seti oluşturmadınız. AI destekli soru üretimine başlamak için bir PDF belgesi yükleyin.",
+  questions_createFirstSet: "İlk Setinizi Oluşturun",
+  questions_yourSets: "Soru Setleriniz",
+  questions_count: "soru",
+  
+  // Question Detail Page
+  questionDetail_title: "Soru Seti Detayları",
+  questionDetail_generatedWith: "Üretilme yöntemi",
+  questionDetail_totalQuestions: "Toplam Soru Sayısı",
+  questionDetail_difficulty: "Zorluk Seviyesi",
+  questionDetail_createdAt: "Oluşturulma Tarihi",
+  questionDetail_documentName: "Kaynak Belge",
+  questionDetail_exportOptions: "Dışa Aktarım Seçenekleri",
+  questionDetail_downloadJson: "JSON İndir",
+  questionDetail_downloadCsv: "CSV İndir",
+  questionDetail_downloadPdf: "PDF İndir",
+  questionDetail_examMode: "Sınav Modu",
+  questionDetail_answer: "Cevap",
+  questionDetail_showAnswer: "Cevabı Göster",
+  questionDetail_hideAnswer: "Cevabı Gizle",
+  
   refresh: "Yenile",
 };
+
 export type TrDict = typeof tr;

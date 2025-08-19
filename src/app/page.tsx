@@ -28,7 +28,7 @@ export default function Home() {
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-white to-purple-50">
         <div className="text-center space-y-4">
           <div className="animate-spin w-12 h-12 border-4 border-blue-200 border-t-blue-600 rounded-full mx-auto"></div>
-          <p className="text-gray-600 font-medium">Loading your workspace...</p>
+          <p className="text-gray-600 font-medium">{t("stats_loadingWorkspace")}</p>
         </div>
       </div>
     );
@@ -43,19 +43,16 @@ export default function Home() {
             <div className="text-center space-y-8 mb-16">
               <div className="inline-flex items-center gap-2 bg-blue-100 text-blue-700 px-4 py-2 rounded-full text-sm font-medium">
                 <Sparkles className="w-4 h-4" />
-                Powered by Gemini 2.5 Flash
+                {t("hero_poweredBy")}
               </div>
               
               <h1 className="text-5xl md:text-7xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-blue-800 bg-clip-text text-transparent leading-tight">
-                AI Question
-                <br />
-                Creator
+                {t("hero_title")}
               </h1>
               
               <p className="text-xl md:text-2xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-                Transform your documents into intelligent interview questions with advanced AI. 
-                <span className="text-blue-600 font-semibold"> RAG-enhanced generation</span> for 
-                precision and relevance.
+                {t("hero_subtitle")}
+                <span className="text-blue-600 font-semibold"> {t("hero_ragEnhanced")}</span> {t("hero_subtitle2")}
               </p>
             </div>
 
@@ -65,24 +62,24 @@ export default function Home() {
                 <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-500 rounded-xl flex items-center justify-center mb-4">
                   <Brain className="w-6 h-6 text-white" />
                 </div>
-                <h3 className="text-xl font-semibold mb-3">RAG Technology</h3>
-                <p className="text-gray-600">Advanced Retrieval-Augmented Generation for contextually aware questions from your documents.</p>
+                <h3 className="text-xl font-semibold mb-3">{t("hero_feature1Title")}</h3>
+                <p className="text-gray-600">{t("hero_feature1Desc")}</p>
               </div>
 
               <div className="bg-white/70 backdrop-blur-sm rounded-2xl p-8 border border-gray-200 hover:shadow-xl transition-all duration-300">
                 <div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl flex items-center justify-center mb-4">
                   <Zap className="w-6 h-6 text-white" />
                 </div>
-                <h3 className="text-xl font-semibold mb-3">Lightning Fast</h3>
-                <p className="text-gray-600">Gemini 2.5 Flash delivers intelligent questions in seconds with superior performance.</p>
+                <h3 className="text-xl font-semibold mb-3">{t("hero_feature2Title")}</h3>
+                <p className="text-gray-600">{t("hero_feature2Desc")}</p>
               </div>
 
               <div className="bg-white/70 backdrop-blur-sm rounded-2xl p-8 border border-gray-200 hover:shadow-xl transition-all duration-300">
                 <div className="w-12 h-12 bg-gradient-to-r from-green-500 to-blue-500 rounded-xl flex items-center justify-center mb-4">
                   <Shield className="w-6 h-6 text-white" />
                 </div>
-                <h3 className="text-xl font-semibold mb-3">Export Ready</h3>
-                <p className="text-gray-600">Professional formats: JSON, CSV, PDF, and exam-ready documents with custom branding.</p>
+                <h3 className="text-xl font-semibold mb-3">{t("hero_feature3Title")}</h3>
+                <p className="text-gray-600">{t("hero_feature3Desc")}</p>
               </div>
             </div>
 
@@ -145,10 +142,10 @@ export default function Home() {
               <div className="absolute inset-0 bg-black/10"></div>
               <div className="relative z-10">
                 <h2 className="text-2xl md:text-3xl font-bold mb-2">
-                  Welcome back! 👋
+                  {t("dashboard_welcome")}
                 </h2>
                 <p className="text-blue-100 text-lg">
-                  Ready to create intelligent questions? Upload your document and let AI do the magic.
+                  {t("dashboard_welcomeDesc")}
                 </p>
               </div>
               <div className="absolute -right-8 -top-8 w-32 h-32 bg-white/10 rounded-full"></div>
@@ -166,9 +163,9 @@ export default function Home() {
                     <div className="w-8 h-8 bg-gradient-to-r from-green-500 to-blue-500 rounded-lg flex items-center justify-center">
                       <Zap className="w-4 h-4 text-white" />
                     </div>
-                    <h3 className="text-lg font-semibold text-gray-900">Create Questions</h3>
+                    <h3 className="text-lg font-semibold text-gray-900">{t("dashboard_createTitle")}</h3>
                   </div>
-                  <p className="text-gray-600 text-sm">Upload PDF documents and generate intelligent interview questions</p>
+                  <p className="text-gray-600 text-sm">{t("dashboard_createDesc")}</p>
                 </div>
                 <div className="p-6">
                   <UploadAndGenerate />
@@ -181,9 +178,9 @@ export default function Home() {
                     <div className="w-8 h-8 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg flex items-center justify-center">
                       <Brain className="w-4 h-4 text-white" />
                     </div>
-                    <h3 className="text-lg font-semibold text-gray-900">Question Sets</h3>
+                    <h3 className="text-lg font-semibold text-gray-900">{t("dashboard_questionSetsTitle")}</h3>
                   </div>
-                  <p className="text-gray-600 text-sm">Manage and export your generated question collections</p>
+                  <p className="text-gray-600 text-sm">{t("dashboard_questionSetsDesc")}</p>
                 </div>
                 <div className="p-6">
                   <QuestionSetList />
@@ -200,29 +197,29 @@ export default function Home() {
                     <Sparkles className="w-5 h-5 text-white" />
                   </div>
                   <div>
-                    <h4 className="font-semibold text-gray-900">AI Engine</h4>
+                    <h4 className="font-semibold text-gray-900">{t("dashboard_aiEngine")}</h4>
                     <p className="text-sm text-gray-600">Gemini 2.5 Flash</p>
                   </div>
                 </div>
                 <div className="space-y-3 text-sm">
                   <div className="flex justify-between">
-                    <span className="text-gray-600">Processing Speed</span>
-                    <span className="font-medium text-green-600">Ultra Fast</span>
+                    <span className="text-gray-600">{t("dashboard_processingSpeed")}</span>
+                    <span className="font-medium text-green-600">{t("dashboard_ultraFast")}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-600">RAG Technology</span>
-                    <span className="font-medium text-blue-600">Active</span>
+                    <span className="text-gray-600">{t("dashboard_ragTechnology")}</span>
+                    <span className="font-medium text-blue-600">{t("dashboard_active")}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-600">Export Formats</span>
-                    <span className="font-medium text-purple-600">4 Types</span>
+                    <span className="text-gray-600">{t("dashboard_exportFormats")}</span>
+                    <span className="font-medium text-purple-600">{t("dashboard_fourTypes")}</span>
                   </div>
                 </div>
               </div>
 
               {/* Quick Stats */}
               <div className="bg-white rounded-2xl border border-gray-200/50 p-6 shadow-sm">
-                <h4 className="font-semibold text-gray-900 mb-4">Quick Stats</h4>
+                <h4 className="font-semibold text-gray-900 mb-4">{t("dashboard_quickStats")}</h4>
                 {statsLoading ? (
                   <div className="flex items-center justify-center py-8">
                     <div className="w-6 h-6 border-2 border-blue-200 border-t-blue-600 rounded-full animate-spin"></div>
@@ -230,19 +227,19 @@ export default function Home() {
                 ) : (
                   <div className="space-y-4">
                     <div className="flex items-center justify-between">
-                      <span className="text-gray-600 text-sm">Total Sessions</span>
+                      <span className="text-gray-600 text-sm">{t("stats_totalSessions")}</span>
                       <span className="font-bold text-xl text-blue-600">
                         {stats.totalSessions.toLocaleString()}
                       </span>
                     </div>
                     <div className="flex items-center justify-between">
-                      <span className="text-gray-600 text-sm">Questions Generated</span>
+                      <span className="text-gray-600 text-sm">{t("stats_questionsGenerated")}</span>
                       <span className="font-bold text-xl text-green-600">
                         {stats.totalQuestions.toLocaleString()}
                       </span>
                     </div>
                     <div className="flex items-center justify-between">
-                      <span className="text-gray-600 text-sm">Documents Processed</span>
+                      <span className="text-gray-600 text-sm">{t("stats_documentsProcessed")}</span>
                       <span className="font-bold text-xl text-purple-600">
                         {stats.documentsProcessed.toLocaleString()}
                       </span>
@@ -250,7 +247,7 @@ export default function Home() {
                     {stats.avgQuestionsPerSession > 0 && (
                       <div className="pt-2 border-t border-gray-100">
                         <div className="flex items-center justify-between">
-                          <span className="text-gray-600 text-sm">Avg. per Session</span>
+                          <span className="text-gray-600 text-sm">{t("stats_avgPerSession")}</span>
                           <span className="font-bold text-lg text-orange-600">
                             {stats.avgQuestionsPerSession}
                           </span>
@@ -264,12 +261,12 @@ export default function Home() {
               {/* Tips */}
               <div className="bg-gradient-to-br from-yellow-50 to-orange-50 rounded-2xl p-6 border border-yellow-200/50">
                 <h4 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
-                  💡 Pro Tips
+                  {t("dashboard_proTips")}
                 </h4>
                 <ul className="space-y-2 text-sm text-gray-700">
-                  <li>• Upload clear, well-formatted PDFs for best results</li>
-                  <li>• Use the exam export for professional formats</li>
-                  <li>• RAG technology works best with longer documents</li>
+                  <li>{t("dashboard_tip1")}</li>
+                  <li>{t("dashboard_tip2")}</li>
+                  <li>{t("dashboard_tip3")}</li>
                 </ul>
               </div>
             </div>

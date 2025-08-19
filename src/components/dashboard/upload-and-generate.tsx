@@ -96,7 +96,7 @@ export function UploadAndGenerate() {
           }`}>
             {file ? <CheckCircle className="w-4 h-4" /> : '1'}
           </div>
-          <h3 className="font-semibold text-gray-900">Upload Document</h3>
+          <h3 className="font-semibold text-gray-900">{t("ug_step1")}</h3>
           {file && (
             <div className="flex items-center gap-2 ml-auto">
               <FileText className="w-4 h-4 text-green-600" />
@@ -126,7 +126,7 @@ export function UploadAndGenerate() {
             {file ? (
               <div className="text-center">
                 <CheckCircle className="w-8 h-8 text-green-500 mx-auto mb-2" />
-                <p className="text-sm font-medium text-green-700">File uploaded successfully</p>
+                <p className="text-sm font-medium text-green-700">{t("ug_uploadSuccess")}</p>
                 <p className="text-xs text-green-600">{file.name}</p>
               </div>
             ) : (
@@ -198,7 +198,7 @@ export function UploadAndGenerate() {
           }`}>
             {documentId ? <CheckCircle className="w-4 h-4" /> : <Zap className="w-4 h-4" />}
           </div>
-          <h3 className="font-semibold text-gray-900">Generate Questions</h3>
+          <h3 className="font-semibold text-gray-900">{t("ug_step3")}</h3>
           {documentId && (
             <div className="flex items-center gap-2 ml-auto">
               <div className="w-2 h-2 bg-green-500 rounded-full"></div>

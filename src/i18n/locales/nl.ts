@@ -1,9 +1,20 @@
 export const nl = {
-  appTitle: "Interview Vragen Generator",
+  appTitle: "AI Vragen Generator",
   logout: "Afmelden",
   noteTitle: "Opmerking",
   noteBody:
     "Voor blijvende bestandsopslag op Vercel heb je een externe object storage (S3 etc.) nodig. De huidige demo gebruikt lokale schijf.",
+  
+  // Common
+  loading: "Laden...",
+  back: "Terug",
+  yes: "Ja",
+  no: "Nee",
+  cancel: "Annuleren",
+  confirm: "Bevestigen",
+  error: "Fout",
+  success: "Succesvol",
+  
   // Auth
   auth_loginTitle: "Inloggen",
   auth_registerTitle: "Registreren",
@@ -15,6 +26,42 @@ export const nl = {
   auth_register: "Registreren",
   auth_noAccountRegister: "Geen account? Registreer",
   auth_haveAccountLogin: "Account? Inloggen",
+  auth_required: "Authenticatie Vereist",
+  auth_requiredDesc: "Log in om toegang te krijgen tot uw vragensets.",
+  
+  // Homepage Hero
+  hero_poweredBy: "Powered by Gemini 2.5 Flash",
+  hero_title: "AI Vragen Generator",
+  hero_subtitle: "Transformeer uw documenten in intelligente interview vragen met geavanceerde AI.",
+  hero_ragEnhanced: "RAG-verbeterde generatie",
+  hero_subtitle2: "voor precisie en relevantie.",
+  hero_feature1Title: "RAG Technologie",
+  hero_feature1Desc: "Geavanceerde Retrieval-Augmented Generation voor contextueel bewuste vragen uit uw documenten.",
+  hero_feature2Title: "Bliksemsnelle",
+  hero_feature2Desc: "Gemini 2.5 Flash levert intelligente vragen in seconden met superieure prestaties.",
+  hero_feature3Title: "Export Klaar",
+  hero_feature3Desc: "Professionele formaten: JSON, CSV, PDF en examen-klare documenten met aangepaste branding.",
+  
+  // Dashboard
+  dashboard_welcome: "Welkom terug! 👋",
+  dashboard_welcomeDesc: "Klaar om intelligente vragen te maken? Upload uw document en laat AI de magie doen.",
+  dashboard_createTitle: "Vragen Maken",
+  dashboard_createDesc: "Upload PDF documenten en genereer intelligente interview vragen",
+  dashboard_questionSetsTitle: "Vragensets",
+  dashboard_questionSetsDesc: "Beheer en exporteer uw gegenereerde vragen collecties",
+  dashboard_aiEngine: "AI Engine",
+  dashboard_processingSpeed: "Verwerkingssnelheid",
+  dashboard_ultraFast: "Ultra Snel",
+  dashboard_ragTechnology: "RAG Technologie",
+  dashboard_active: "Actief",
+  dashboard_exportFormats: "Export Formaten",
+  dashboard_fourTypes: "4 Types",
+  dashboard_quickStats: "Snelle Statistieken",
+  dashboard_proTips: "💡 Pro Tips",
+  dashboard_tip1: "• Upload duidelijke, goed geformatteerde PDF's voor beste resultaten",
+  dashboard_tip2: "• Gebruik examen export voor professionele formaten",
+  dashboard_tip3: "• RAG technologie werkt het beste met langere documenten",
+  
   // Upload & Generate
   ug_cardTitle: "PDF Uploaden & Vragen Genereren",
   ug_pdfFile: "PDF Bestand",
@@ -35,6 +82,23 @@ export const nl = {
   ug_err_needUpload: "Upload eerst een bestand",
   ug_err_generate: "Generatie fout",
   ug_success_ready: "Vragen klaar",
+  ug_step1: "Document Uploaden",
+  ug_step2: "Instellingen Configureren",
+  ug_step3: "Vragen Genereren",
+  ug_uploadSuccess: "Bestand succesvol geüpload",
+  ug_dragDrop: "Sleep uw PDF hierheen, of",
+  ug_browse: "bladeren",
+  ug_aiGenerated: "AI Gegenereerd",
+  ug_ragEnhanced: "RAG Verbeterd",
+  
+  // Stats
+  stats_totalSessions: "Totaal Sessies",
+  stats_questionsGenerated: "Vragen Gegenereerd",
+  stats_documentsProcessed: "Documenten Verwerkt",
+  stats_avgPerSession: "Gem. per Sessie",
+  stats_loadingStats: "Uw vragensets laden...",
+  stats_loadingWorkspace: "Uw werkruimte laden...",
+  
   // Question Set List
   ql_recent: "Recente Vragensets",
   ql_none: "Nog geen vragenset.",
@@ -46,6 +110,34 @@ export const nl = {
   ql_fetchFailed: "Vragensets ophalen mislukt",
   ql_seeAll: "Alles Zien",
   ql_questionsSuffix: "vragen",
+  ql_viewDetails: "Details Bekijken",
+  ql_aiGeneratedWithModel: "AI-gegenereerd met Gemini 2.5 Flash",
+  
+  // Questions Page
+  questions_title: "Alle Vragensets",
+  questions_subtitle: "Beheer uw AI-gegenereerde vragen collecties",
+  questions_noSetsTitle: "Nog Geen Vragensets",
+  questions_noSetsDesc: "U heeft nog geen vragensets aangemaakt. Upload een PDF document om te beginnen met AI-powered vragen generatie.",
+  questions_createFirstSet: "Maak Uw Eerste Set",
+  questions_yourSets: "Uw Vragensets",
+  questions_count: "vragen",
+  
+  // Question Detail Page
+  questionDetail_title: "Vragenset Details",
+  questionDetail_generatedWith: "Gegenereerd met",
+  questionDetail_totalQuestions: "Totaal Vragen",
+  questionDetail_difficulty: "Moeilijkheidsniveau",
+  questionDetail_createdAt: "Aangemaakt op",
+  questionDetail_documentName: "Bron Document",
+  questionDetail_exportOptions: "Export Opties",
+  questionDetail_downloadJson: "Download JSON",
+  questionDetail_downloadCsv: "Download CSV",
+  questionDetail_downloadPdf: "Download PDF",
+  questionDetail_examMode: "Examen Modus",
+  questionDetail_answer: "Antwoord",
+  questionDetail_showAnswer: "Toon Antwoord",
+  questionDetail_hideAnswer: "Verberg Antwoord",
+  
   refresh: "Vernieuwen",
 };
 export type NlDict = typeof nl;
