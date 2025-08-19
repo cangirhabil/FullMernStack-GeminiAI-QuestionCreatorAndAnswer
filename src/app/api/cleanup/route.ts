@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import connectToDatabase from "@/lib/mongodb";
-import Document from "@/models/Document";
-import QuestionSet from "@/models/QuestionSet";
+import { Document, QuestionSet } from "@/models";
 
 export async function DELETE() {
   try {

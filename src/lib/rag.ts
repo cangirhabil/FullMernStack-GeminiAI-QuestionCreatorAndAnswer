@@ -15,8 +15,12 @@ interface Question {
   answer: string;
   difficulty: string;
   category: string;
+  cognitive_level?: string;
   keywords: string[];
   source_context: string;
+  assessment_criteria?: string;
+  follow_up_potential?: string;
+  industry_relevance?: string;
 }
 
 interface VectorDocument {
@@ -34,7 +38,14 @@ class SimpleVectorStore {
   }
 
   async addDocuments(chunks: DocumentChunk[]): Promise<void> {
-    const model = this.genAI.getGenerativeModel({ model: "text-embedding-004" });
+    // Use Gemini 2.5 Pro for embeddings (fallback to text-embedding-004 if not available)
+    let model;
+    try {
+      model = this.genAI.getGenerativeModel({ model: "gemini-2.5-pro-latest" });
+    } catch (error) {
+      console.warn("Gemini 2.5 Pro not available, using text-embedding-004:", error);
+      model = this.genAI.getGenerativeModel({ model: "text-embedding-004" });
+    }
     
     for (const chunk of chunks) {
       try {
@@ -47,6 +58,19 @@ class SimpleVectorStore {
         });
       } catch (error) {
         console.error(`Failed to embed chunk ${chunk.id}:`, error);
+        // Try fallback embedding model
+        try {
+          const fallbackModel = this.genAI.getGenerativeModel({ model: "text-embedding-004" });
+          const fallbackResult = await fallbackModel.embedContent(chunk.text);
+          const fallbackEmbedding = fallbackResult.embedding.values;
+          
+          this.documents.push({
+            chunk,
+            embedding: fallbackEmbedding || []
+          });
+        } catch (fallbackError) {
+          console.error(`Fallback embedding also failed for chunk ${chunk.id}:`, fallbackError);
+        }
       }
     }
   }
@@ -55,7 +79,15 @@ class SimpleVectorStore {
     if (this.documents.length === 0) return [];
 
     try {
-      const model = this.genAI.getGenerativeModel({ model: "text-embedding-004" });
+      // Use Gemini 2.5 Pro for query embeddings (fallback to text-embedding-004 if not available)
+      let model;
+      try {
+        model = this.genAI.getGenerativeModel({ model: "gemini-2.5-pro-latest" });
+      } catch (error) {
+        console.warn("Gemini 2.5 Pro not available, using text-embedding-004:", error);
+        model = this.genAI.getGenerativeModel({ model: "text-embedding-004" });
+      }
+      
       const queryResult = await model.embedContent(query);
       const queryEmbedding = queryResult.embedding.values;
 
@@ -117,15 +149,29 @@ export class RAGService {
     const chunks: string[] = [];
     let start = 0;
 
+    // Validate input
+    if (!text || text.length === 0) {
+      return [text || ""];
+    }
+
+    // Ensure reasonable chunk size
+    chunkSize = Math.max(100, Math.min(chunkSize, text.length));
+    overlap = Math.max(0, Math.min(overlap, Math.floor(chunkSize / 2)));
+
     while (start < text.length) {
       const end = Math.min(start + chunkSize, text.length);
-      chunks.push(text.slice(start, end));
+      const chunk = text.slice(start, end).trim();
+      
+      if (chunk.length > 0) {
+        chunks.push(chunk);
+      }
+      
       start = end - overlap;
       
       if (start >= text.length) break;
     }
 
-    return chunks;
+    return chunks.length > 0 ? chunks : [text];
   }
 
   async indexDocument(documentId: string, filename: string, content: string): Promise<void> {
@@ -170,7 +216,30 @@ export class RAGService {
     difficulty: string,
     filename: string
   ): Promise<Question[]> {
-    const model = this.genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+    // Use Gemini 2.5 Pro for advanced question generation
+    let model;
+    try {
+      model = this.genAI.getGenerativeModel({ 
+        model: "gemini-2.5-pro-latest",
+        generationConfig: {
+          temperature: 0.7,
+          topP: 0.9,
+          topK: 40,
+          maxOutputTokens: 8192,
+        }
+      });
+      console.log("Using Gemini 2.5 Pro for question generation");
+    } catch (error) {
+      console.warn("Gemini 2.5 Pro not available, falling back to Gemini 1.5 Flash:", error);
+      model = this.genAI.getGenerativeModel({ 
+        model: "gemini-1.5-flash",
+        generationConfig: {
+          temperature: 0.7,
+          topP: 0.9,
+          maxOutputTokens: 8192,
+        }
+      });
+    }
 
     // Create a temporary document ID for indexing
     const tempDocId = `temp_${Date.now()}`;
@@ -201,22 +270,51 @@ export class RAGService {
     const retrievedContext = contextParts.join("\n\n========\n\n");
 
     const enhancedPrompt = `
-You are an expert interview question creator with access to specific document content.
-Your goal is to create comprehensive, well-structured interview questions that thoroughly test understanding of the material.
+You are an advanced AI interview question creator, leveraging Gemini 2.5 Pro capabilities for superior question design.
+Your expertise includes psychological assessment, pedagogical principles, and industry-specific knowledge evaluation.
 
-DOCUMENT INFORMATION:
-Filename: ${filename}
-Total Content Length: ${documentContent.length} characters
+DOCUMENT ANALYSIS:
+- Filename: ${filename}
+- Content Length: ${documentContent.length} characters
+- Processing Method: RAG-enhanced with semantic chunking
+- Model: Gemini 2.5 Pro with advanced reasoning
 
-RELEVANT CONTEXT FROM DOCUMENT:
+CONTEXTUAL CONTENT:
 """
-${retrievedContext || documentContent.slice(0, 6000)}
+${retrievedContext || documentContent.slice(0, 8000)}
 """
 
-TASK:
-Create exactly ${numberOfQuestions} interview questions at ${difficulty} difficulty level.
+ADVANCED TASK SPECIFICATION:
+Generate exactly ${numberOfQuestions} interview questions at ${difficulty} difficulty level with the following enhanced criteria:
 
-REQUIREMENTS:
+COGNITIVE ASSESSMENT FRAMEWORK:
+1. **Knowledge Recall**: Basic understanding and memorization
+2. **Comprehension**: Interpretation and explanation of concepts  
+3. **Application**: Using knowledge in new situations
+4. **Analysis**: Breaking down complex information
+5. **Synthesis**: Combining elements to form new understanding
+6. **Evaluation**: Making judgments about value or validity
+
+DIFFICULTY SCALING:
+- **Easy**: Bloom's Taxonomy Level 1-2 (Remember, Understand)
+- **Medium**: Bloom's Taxonomy Level 3-4 (Apply, Analyze)  
+- **Hard**: Bloom's Taxonomy Level 5-6 (Evaluate, Create)
+
+QUESTION DIVERSIFICATION:
+- 25% Factual/Definition questions
+- 25% Conceptual understanding questions
+- 25% Practical application scenarios
+- 25% Critical thinking/problem-solving questions
+
+ENHANCED REQUIREMENTS:
+1. Questions must be directly derivable from the provided content
+2. Answers should demonstrate deep comprehension of the material
+3. Include real-world application examples where applicable
+4. Ensure psychological validity for interview assessment
+5. Consider cultural sensitivity and inclusivity
+6. Optimize for both technical and behavioral evaluation
+
+ADVANCED OUTPUT STRUCTURE:
 1. Questions should be directly based on the provided content
 2. Each question must be answerable from the document content
 3. Include a mix of question types:
@@ -232,12 +330,37 @@ DIFFICULTY LEVEL GUIDELINES:
 - Medium: Application and analysis of concepts
 - Hard: Complex analysis, synthesis, and critical evaluation
 
-FORMAT:
-Return a valid JSON array where each object has this exact structure:
+Return a JSON array where each object follows this sophisticated structure:
 {
-  "question": "Clear, specific interview question",
-  "answer": "Comprehensive answer with relevant details from the document",
+  "question": "Precisely crafted interview question with clear assessment intent",
+  "answer": "Comprehensive, nuanced answer demonstrating deep subject mastery",
   "difficulty": "${difficulty}",
+  "category": "Primary assessment domain (Technical|Conceptual|Practical|Analytical|Behavioral)",
+  "cognitive_level": "Bloom's taxonomy level (Remember|Understand|Apply|Analyze|Evaluate|Create)",
+  "keywords": ["domain-specific", "terminology", "and", "concepts"],
+  "source_context": "Specific document section or concept area",
+  "assessment_criteria": "What this question specifically evaluates",
+  "follow_up_potential": "Suggested areas for deeper exploration",
+  "industry_relevance": "Real-world application context"
+}
+
+GEMINI 2.5 PRO OPTIMIZATION:
+- Leverage advanced reasoning for question sophistication
+- Utilize enhanced context understanding for relevance
+- Apply superior language generation for clarity
+- Employ multi-modal thinking for comprehensive assessment
+
+CRITICAL SUCCESS FACTORS:
+- Questions must be interview-ready (clear, unambiguous)
+- Answers should showcase candidate's expertise level
+- Content must be directly traceable to source material
+- Assessment value should be immediately apparent to interviewer
+
+EXECUTION MANDATE:
+- Generate exactly ${numberOfQuestions} questions
+- Maintain strict adherence to ${difficulty} difficulty level
+- Ensure JSON validity with no extraneous text
+- Optimize for psychological assessment accuracy
   "category": "Question category (e.g., Technical, Conceptual, Practical, Analytical)",
   "keywords": ["key", "terms", "from", "question"],
   "source_context": "Brief reference to which part of document this relates to"
@@ -280,14 +403,18 @@ IMPORTANT:
           console.warn(`Expected ${numberOfQuestions} questions, got ${questions.length}`);
         }
         
-        // Validate each question has required fields
+        // Validate each question has required fields and map to enhanced structure
         questions = questions.map((q, index) => ({
           question: q.question || `Question ${index + 1}`,
           answer: q.answer || "Answer not provided",
           difficulty: q.difficulty || difficulty,
           category: q.category || "General",
+          cognitive_level: q.cognitive_level || "Understand",
           keywords: q.keywords || [],
-          source_context: q.source_context || "Document content"
+          source_context: q.source_context || "Document content",
+          assessment_criteria: q.assessment_criteria || "General knowledge assessment",
+          follow_up_potential: q.follow_up_potential || "None specified",
+          industry_relevance: q.industry_relevance || "General application"
         }));
         
       } catch (parseError) {

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import connectToDatabase from "@/lib/mongodb";
-import Document from "@/models/Document";
+import { Document } from "@/models";
 import { verifyToken } from "@/lib/auth";
 import { getStorageStrategy, saveLocalFile } from "@/lib/storage";
 // removed direct fs writeFile/mkdir usage in favor of storage helper

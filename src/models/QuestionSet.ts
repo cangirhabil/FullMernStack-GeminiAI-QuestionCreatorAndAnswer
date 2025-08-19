@@ -9,8 +9,12 @@ export interface IQuestionSet extends Document {
     answer: string;
     difficulty: "easy" | "medium" | "hard";
     category?: string;
+    cognitive_level?: string;
     keywords?: string[];
     sourceContext?: string;
+    assessment_criteria?: string;
+    follow_up_potential?: string;
+    industry_relevance?: string;
   }>;
   totalQuestions: number;
   metadata?: {
@@ -18,6 +22,7 @@ export interface IQuestionSet extends Document {
     documentLength?: number;
     generatedAt?: Date;
     ragEnabled?: boolean;
+    aiModel?: string;
   };
   createdAt: Date;
   updatedAt: Date;
@@ -57,11 +62,24 @@ const QuestionSetSchema = new Schema<IQuestionSet>(
         category: {
           type: String,
         },
+        cognitive_level: {
+          type: String,
+          enum: ["Remember", "Understand", "Apply", "Analyze", "Evaluate", "Create"],
+        },
         keywords: {
           type: [String],
           default: [],
         },
         sourceContext: {
+          type: String,
+        },
+        assessment_criteria: {
+          type: String,
+        },
+        follow_up_potential: {
+          type: String,
+        },
+        industry_relevance: {
           type: String,
         },
       },
@@ -85,6 +103,10 @@ const QuestionSetSchema = new Schema<IQuestionSet>(
       ragEnabled: {
         type: Boolean,
         default: false,
+      },
+      aiModel: {
+        type: String,
+        default: "gemini-1.5-flash",
       },
     },
   },

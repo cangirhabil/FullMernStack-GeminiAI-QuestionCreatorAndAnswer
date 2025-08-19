@@ -2,8 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { readFile } from "fs/promises";
 import connectToDatabase from "@/lib/mongodb";
-import Document, { IDocument } from "@/models/Document";
-import QuestionSet from "@/models/QuestionSet";
+import { Document, QuestionSet } from "@/models";
+import { IDocument } from "@/models/Document";
 import { verifyToken } from "@/lib/auth";
 import RAGService from "@/lib/rag";
 import DocumentParser from "@/lib/document-parser";
@@ -118,8 +118,30 @@ export async function POST(request: NextRequest) {
     } catch (ragError) {
       console.error("RAG generation failed, falling back to simple generation:", ragError);
       
-      // Fallback to simple generation if RAG fails
-      const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+      // Fallback to simple generation if RAG fails - use Gemini 2.5 Pro when available
+      let model;
+      try {
+        model = genAI.getGenerativeModel({ 
+          model: "gemini-2.5-pro-latest",
+          generationConfig: {
+            temperature: 0.7,
+            topP: 0.9,
+            topK: 40,
+            maxOutputTokens: 8192,
+          }
+        });
+        console.log("Using Gemini 2.5 Pro for fallback generation");
+      } catch (error) {
+        console.warn("Gemini 2.5 Pro not available, using Gemini 1.5 Flash:", error);
+        model = genAI.getGenerativeModel({ 
+          model: "gemini-1.5-flash",
+          generationConfig: {
+            temperature: 0.7,
+            topP: 0.9,
+            maxOutputTokens: 8192,
+          }
+        });
+      }
       
       const fallbackPrompt = `
 You are an expert at creating interview questions based on document content.
@@ -187,14 +209,19 @@ Make sure to:
         answer: q.answer,
         difficulty: q.difficulty || difficulty,
         category: q.category || "General",
+        cognitive_level: q.cognitive_level || "Understand",
         keywords: q.keywords || [],
-        sourceContext: q.source_context || "Document content"
+        sourceContext: q.source_context || "Document content",
+        assessment_criteria: q.assessment_criteria || "General knowledge assessment",
+        follow_up_potential: q.follow_up_potential || "None specified",
+        industry_relevance: q.industry_relevance || "General application"
       })),
       metadata: {
-        generationMethod: 'RAG-enhanced',
+        generationMethod: 'RAG-enhanced with Gemini 2.5 Pro',
         documentLength: textContent.length,
         generatedAt: new Date(),
-        ragEnabled: true
+        ragEnabled: true,
+        aiModel: 'gemini-2.5-pro-latest'
       }
     });
 
