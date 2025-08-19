@@ -1,4 +1,5 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import { GoogleGenerativeAI } from '@google/generative-ai';
+import { withRetry, isRateLimitError } from './rate-limit-utils';
 
 interface DocumentChunk {
   id: string;
@@ -38,13 +39,13 @@ class SimpleVectorStore {
   }
 
   async addDocuments(chunks: DocumentChunk[]): Promise<void> {
-    // Use Gemini 2.5 Pro for embeddings (fallback to text-embedding-004 if not available)
+    // Use text-embedding-004 for embeddings (proper embedding model)
     let model;
     try {
-      model = this.genAI.getGenerativeModel({ model: "gemini-2.5-pro-latest" });
-    } catch (error) {
-      console.warn("Gemini 2.5 Pro not available, using text-embedding-004:", error);
       model = this.genAI.getGenerativeModel({ model: "text-embedding-004" });
+    } catch (error) {
+      console.warn("text-embedding-004 not available, using models/embedding-001:", error);
+      model = this.genAI.getGenerativeModel({ model: "models/embedding-001" });
     }
     
     for (const chunk of chunks) {
@@ -79,13 +80,13 @@ class SimpleVectorStore {
     if (this.documents.length === 0) return [];
 
     try {
-      // Use Gemini 2.5 Pro for query embeddings (fallback to text-embedding-004 if not available)
+      // Use text-embedding-004 for query embeddings (proper embedding model)
       let model;
       try {
-        model = this.genAI.getGenerativeModel({ model: "gemini-2.5-pro-latest" });
-      } catch (error) {
-        console.warn("Gemini 2.5 Pro not available, using text-embedding-004:", error);
         model = this.genAI.getGenerativeModel({ model: "text-embedding-004" });
+      } catch (error) {
+        console.warn("text-embedding-004 not available, using models/embedding-001:", error);
+        model = this.genAI.getGenerativeModel({ model: "models/embedding-001" });
       }
       
       const queryResult = await model.embedContent(query);
@@ -147,31 +148,57 @@ export class RAGService {
   // Split text into chunks
   private splitTextIntoChunks(text: string, chunkSize: number = 1000, overlap: number = 200): string[] {
     const chunks: string[] = [];
-    let start = 0;
-
-    // Validate input
-    if (!text || text.length === 0) {
-      return [text || ""];
+    
+    // Input validation
+    if (!text || text.trim().length === 0) {
+      console.warn('Empty text provided to splitTextIntoChunks');
+      return [];
     }
-
-    // Ensure reasonable chunk size
-    chunkSize = Math.max(100, Math.min(chunkSize, text.length));
-    overlap = Math.max(0, Math.min(overlap, Math.floor(chunkSize / 2)));
-
-    while (start < text.length) {
+    
+    // For very small texts, return as single chunk
+    if (text.length <= chunkSize) {
+      return [text.trim()];
+    }
+    
+    const sentences = text.split(/[.!?]+/).filter(s => s.trim().length > 0);
+    
+    let start = 0;
+    let iterations = 0;
+    const maxIterations = Math.ceil(text.length / (chunkSize - overlap)) + 10; // Safety limit
+    
+    while (start < text.length && iterations < maxIterations) {
       const end = Math.min(start + chunkSize, text.length);
-      const chunk = text.slice(start, end).trim();
+      let chunk = text.slice(start, end);
       
+      // Try to end at a sentence boundary
+      if (end < text.length) {
+        const lastSentenceEnd = chunk.lastIndexOf('.');
+        if (lastSentenceEnd > chunk.length * 0.7) {
+          chunk = chunk.slice(0, lastSentenceEnd + 1);
+        }
+      }
+      
+      chunk = chunk.trim();
       if (chunk.length > 0) {
         chunks.push(chunk);
       }
       
-      start = end - overlap;
+      // Prevent infinite loops
+      const nextStart = Math.max(start + 1, end - overlap);
+      if (nextStart <= start) {
+        start = start + Math.max(1, Math.floor(chunkSize / 2));
+      } else {
+        start = nextStart;
+      }
       
-      if (start >= text.length) break;
+      iterations++;
     }
-
-    return chunks.length > 0 ? chunks : [text];
+    
+    if (iterations >= maxIterations) {
+      console.warn('Chunking reached maximum iterations, may be incomplete');
+    }
+    
+    return chunks.length > 0 ? chunks : [text.trim()];
   }
 
   async indexDocument(documentId: string, filename: string, content: string): Promise<void> {
@@ -216,11 +243,11 @@ export class RAGService {
     difficulty: string,
     filename: string
   ): Promise<Question[]> {
-    // Use Gemini 2.5 Pro for advanced question generation
+    // Use Gemini 2.0 Flash for advanced question generation
     let model;
     try {
       model = this.genAI.getGenerativeModel({ 
-        model: "gemini-2.5-pro-latest",
+        model: "gemini-2.0-flash-exp",
         generationConfig: {
           temperature: 0.7,
           topP: 0.9,
@@ -228,9 +255,9 @@ export class RAGService {
           maxOutputTokens: 8192,
         }
       });
-      console.log("Using Gemini 2.5 Pro for question generation");
+      console.log("Using Gemini 2.0 Flash for question generation");
     } catch (error) {
-      console.warn("Gemini 2.5 Pro not available, falling back to Gemini 1.5 Flash:", error);
+      console.warn("Gemini 2.0 Flash not available, falling back to Gemini 1.5 Flash:", error);
       model = this.genAI.getGenerativeModel({ 
         model: "gemini-1.5-flash",
         generationConfig: {

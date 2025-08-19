@@ -7,6 +7,7 @@ import { IDocument } from "@/models/Document";
 import { verifyToken } from "@/lib/auth";
 import RAGService from "@/lib/rag";
 import DocumentParser from "@/lib/document-parser";
+import { withRetry, isRateLimitError } from "@/lib/rate-limit-utils";
 
 const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY!);
 
@@ -118,11 +119,11 @@ export async function POST(request: NextRequest) {
     } catch (ragError) {
       console.error("RAG generation failed, falling back to simple generation:", ragError);
       
-      // Fallback to simple generation if RAG fails - use Gemini 2.5 Pro when available
+      // Fallback to simple generation if RAG fails - use Gemini 2.0 Flash
       let model;
       try {
         model = genAI.getGenerativeModel({ 
-          model: "gemini-2.5-pro-latest",
+          model: "gemini-2.0-flash-exp",
           generationConfig: {
             temperature: 0.7,
             topP: 0.9,
@@ -130,9 +131,9 @@ export async function POST(request: NextRequest) {
             maxOutputTokens: 8192,
           }
         });
-        console.log("Using Gemini 2.5 Pro for fallback generation");
+        console.log("Using Gemini 2.0 Flash for fallback generation");
       } catch (error) {
-        console.warn("Gemini 2.5 Pro not available, using Gemini 1.5 Flash:", error);
+        console.warn("Gemini 2.0 Flash not available, using Gemini 1.5 Flash:", error);
         model = genAI.getGenerativeModel({ 
           model: "gemini-1.5-flash",
           generationConfig: {
@@ -173,7 +174,10 @@ Make sure to:
 5. Return only valid JSON, no additional text
 `;
 
-      const result = await model.generateContent(fallbackPrompt);
+      const result = await withRetry(async () => {
+        return await model.generateContent(fallbackPrompt);
+      }, 3, 2000);
+      
       const response = await result.response;
       const text = response.text();
 
@@ -217,11 +221,11 @@ Make sure to:
         industry_relevance: q.industry_relevance || "General application"
       })),
       metadata: {
-        generationMethod: 'RAG-enhanced with Gemini 2.5 Pro',
+        generationMethod: 'RAG-enhanced with Gemini 2.0 Flash',
         documentLength: textContent.length,
         generatedAt: new Date(),
         ragEnabled: true,
-        aiModel: 'gemini-2.5-pro-latest'
+        aiModel: 'gemini-2.0-flash-exp'
       }
     });
 
