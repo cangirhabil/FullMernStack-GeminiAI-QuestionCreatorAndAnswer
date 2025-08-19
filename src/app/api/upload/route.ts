@@ -1,10 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import { join } from "path";
 import connectToDatabase from "@/lib/mongodb";
 import Document from "@/models/Document";
 import { verifyToken } from "@/lib/auth";
 import { getStorageStrategy, saveLocalFile } from "@/lib/storage";
-import { existsSync } from "fs"; // only used while legacy local path code remains
 // removed direct fs writeFile/mkdir usage in favor of storage helper
 
 export async function POST(request: NextRequest) {

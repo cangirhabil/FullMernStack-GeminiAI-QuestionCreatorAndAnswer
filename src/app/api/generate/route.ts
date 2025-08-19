@@ -5,6 +5,8 @@ import connectToDatabase from "@/lib/mongodb";
 import Document, { IDocument } from "@/models/Document";
 import QuestionSet from "@/models/QuestionSet";
 import { verifyToken } from "@/lib/auth";
+import RAGService from "@/lib/rag";
+import DocumentParser from "@/lib/document-parser";
 
 const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY!);
 
@@ -63,23 +65,63 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Placeholder extraction (real PDF parsing disabled)
-  let textContent = `Placeholder content for ${docWithPossibleContent.originalName}.`;
+    // Parse document content using enhanced parser
+    let textContent = '';
     if (rawBuffer && rawBuffer.length > 32) {
-      textContent += ` (bytes=${rawBuffer.length})`;
+      try {
+        const parsedDoc = await DocumentParser.parseDocument(
+          rawBuffer, 
+          docWithPossibleContent.mimeType, 
+          docWithPossibleContent.originalName
+        );
+        
+        textContent = DocumentParser.cleanText(parsedDoc.text);
+        
+        console.log(`Parsed document: ${parsedDoc.pages} pages, ${textContent.length} characters`);
+        
+        // Update document with parsed content if not already stored
+        if (!docWithPossibleContent.content && textContent.length > 100) {
+          document.content = Buffer.from(textContent, 'utf-8');
+          await document.save();
+          console.log('Saved parsed content to database');
+        }
+      } catch (parseError) {
+        console.error('Document parsing failed:', parseError);
+        textContent = `Placeholder content for ${docWithPossibleContent.originalName}.`;
+      }
+    } else {
+      textContent = `Placeholder content for ${docWithPossibleContent.originalName}.`;
     }
 
-    console.log("Using synthetic text length:", textContent.length);
+    console.log("Final text content length:", textContent.length);
 
     // Minimal guard
     if (!textContent || textContent.trim().length < 10) {
       return NextResponse.json({ error: "Empty document content" }, { status: 400 });
     }
 
-    // Generate questions using Gemini AI
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-
-    const prompt = `
+    // Initialize RAG service and generate questions
+    const ragService = new RAGService(process.env.GOOGLE_API_KEY!);
+    
+    let questions;
+    try {
+      // Use RAG-enhanced question generation
+      questions = await ragService.generateQuestionsWithRAG(
+        textContent,
+        numberOfQuestions,
+        difficulty,
+        docWithPossibleContent.originalName
+      );
+      
+      console.log(`RAG service generated ${questions.length} questions`);
+      
+    } catch (ragError) {
+      console.error("RAG generation failed, falling back to simple generation:", ragError);
+      
+      // Fallback to simple generation if RAG fails
+      const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+      
+      const fallbackPrompt = `
 You are an expert at creating interview questions based on document content.
 Your goal is to prepare a candidate for their interview and tests.
 
@@ -96,7 +138,9 @@ Please format your response as a JSON array where each object has the following 
   "question": "The interview question",
   "answer": "A comprehensive answer to the question",
   "difficulty": "${difficulty}",
-  "category": "Category of the question (e.g., Technical, Conceptual, Practical)"
+  "category": "Category of the question (e.g., Technical, Conceptual, Practical)",
+  "keywords": ["relevant", "keywords"],
+  "source_context": "Brief reference to document section"
 }
 
 Make sure to:
@@ -107,24 +151,23 @@ Make sure to:
 5. Return only valid JSON, no additional text
 `;
 
-    const result = await model.generateContent(prompt);
-    const response = await result.response;
-    const text = response.text();
+      const result = await model.generateContent(fallbackPrompt);
+      const response = await result.response;
+      const text = response.text();
 
-    // Parse the JSON response
-    let questions;
-    try {
-      // Clean the response to extract JSON
-      const jsonStart = text.indexOf("[");
-      const jsonEnd = text.lastIndexOf("]") + 1;
-      const jsonText = text.slice(jsonStart, jsonEnd);
-      questions = JSON.parse(jsonText);
-    } catch (parseError) {
-      console.error("Failed to parse AI response:", parseError);
-      return NextResponse.json(
-        { error: "Failed to generate questions. Please try again." },
-        { status: 500 }
-      );
+      // Parse the JSON response
+      try {
+        const jsonStart = text.indexOf("[");
+        const jsonEnd = text.lastIndexOf("]") + 1;
+        const jsonText = text.slice(jsonStart, jsonEnd);
+        questions = JSON.parse(jsonText);
+      } catch (parseError) {
+        console.error("Failed to parse fallback AI response:", parseError);
+        return NextResponse.json(
+          { error: "Failed to generate questions. Please try again." },
+          { status: 500 }
+        );
+      }
     }
 
     if (!Array.isArray(questions) || questions.length === 0) {
@@ -134,17 +177,25 @@ Make sure to:
       );
     }
 
-    // Save to database
+    // Save to database with enhanced question structure
     const questionSet = new QuestionSet({
       userId,
       documentId,
-  title: `Questions from ${docWithPossibleContent.originalName}`,
+      title: `Questions from ${docWithPossibleContent.originalName}`,
       questions: questions.map((q) => ({
         question: q.question,
         answer: q.answer,
         difficulty: q.difficulty || difficulty,
         category: q.category || "General",
+        keywords: q.keywords || [],
+        sourceContext: q.source_context || "Document content"
       })),
+      metadata: {
+        generationMethod: 'RAG-enhanced',
+        documentLength: textContent.length,
+        generatedAt: new Date(),
+        ragEnabled: true
+      }
     });
 
     await questionSet.save();

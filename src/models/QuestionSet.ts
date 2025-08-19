@@ -9,8 +9,16 @@ export interface IQuestionSet extends Document {
     answer: string;
     difficulty: "easy" | "medium" | "hard";
     category?: string;
+    keywords?: string[];
+    sourceContext?: string;
   }>;
   totalQuestions: number;
+  metadata?: {
+    generationMethod?: string;
+    documentLength?: number;
+    generatedAt?: Date;
+    ragEnabled?: boolean;
+  };
   createdAt: Date;
   updatedAt: Date;
 }
@@ -49,11 +57,35 @@ const QuestionSetSchema = new Schema<IQuestionSet>(
         category: {
           type: String,
         },
+        keywords: {
+          type: [String],
+          default: [],
+        },
+        sourceContext: {
+          type: String,
+        },
       },
     ],
     totalQuestions: {
       type: Number,
       default: 0,
+    },
+    metadata: {
+      generationMethod: {
+        type: String,
+        default: "standard",
+      },
+      documentLength: {
+        type: Number,
+      },
+      generatedAt: {
+        type: Date,
+        default: Date.now,
+      },
+      ragEnabled: {
+        type: Boolean,
+        default: false,
+      },
     },
   },
   {
