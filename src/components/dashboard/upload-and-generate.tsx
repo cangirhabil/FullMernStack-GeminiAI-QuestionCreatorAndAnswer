@@ -21,6 +21,7 @@ import {
 import { Spinner } from "@/components/ui/spinner";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
+import { useLang } from "@/components/providers/lang-provider";
 
 export function UploadAndGenerate() {
   const [file, setFile] = useState<File | null>(null);
@@ -30,9 +31,10 @@ export function UploadAndGenerate() {
   const [uploading, setUploading] = useState(false);
   const [generating, setGenerating] = useState(false);
   const router = useRouter();
+  const { t } = useLang();
 
   const handleUpload = async () => {
-    if (!file) return toast.error("Önce PDF seçin");
+    if (!file) return toast.error(t("ug_err_selectPdf"));
     setUploading(true);
     try {
       const formData = new FormData();
@@ -42,11 +44,12 @@ export function UploadAndGenerate() {
         body: formData,
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Yükleme başarısız");
+      if (!res.ok) throw new Error(data.error || t("ug_err_uploadFailed"));
       setDocumentId(data.documentId);
-      toast.success("Dosya yüklendi");
+      toast.success(t("ug_success_uploaded"));
     } catch (err) {
-      const message = err instanceof Error ? err.message : "Yükleme hatası";
+      const message =
+        err instanceof Error ? err.message : t("ug_err_uploadGeneric");
       toast.error(message);
     } finally {
       setUploading(false);
@@ -54,7 +57,7 @@ export function UploadAndGenerate() {
   };
 
   const handleGenerate = async () => {
-    if (!documentId) return toast.error("Önce dosya yükleyin");
+    if (!documentId) return toast.error(t("ug_err_needUpload"));
     setGenerating(true);
     try {
       const res = await fetch("/api/generate", {
@@ -63,11 +66,11 @@ export function UploadAndGenerate() {
         body: JSON.stringify({ documentId, numberOfQuestions, difficulty }),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Oluşturma hatası");
-      toast.success("Sorular hazır");
+      if (!res.ok) throw new Error(data.error || t("ug_err_generate"));
+      toast.success(t("ug_success_ready"));
       router.push(`/questions/${data.questionSetId}`);
     } catch (err) {
-      const message = err instanceof Error ? err.message : "Oluşturma hatası";
+      const message = err instanceof Error ? err.message : t("ug_err_generate");
       toast.error(message);
     } finally {
       setGenerating(false);
@@ -77,11 +80,11 @@ export function UploadAndGenerate() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>PDF Yükle ve Soru Oluştur</CardTitle>
+        <CardTitle>{t("ug_cardTitle")}</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="space-y-1">
-          <Label>PDF Dosyası</Label>
+          <Label>{t("ug_pdfFile")}</Label>
           <Input
             type="file"
             accept="application/pdf"
@@ -90,20 +93,22 @@ export function UploadAndGenerate() {
         </div>
         <div className="flex gap-4 flex-wrap">
           <div className="space-y-1 flex-1 min-w-[140px]">
-            <Label>Zorluk</Label>
+            <Label>{t("ug_difficulty")}</Label>
             <Select value={difficulty} onValueChange={setDifficulty}>
               <SelectTrigger>
-                <SelectValue placeholder="Seç" />
+                <SelectValue placeholder={t("ug_difficulty")} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="easy">Kolay</SelectItem>
-                <SelectItem value="medium">Orta</SelectItem>
-                <SelectItem value="hard">Zor</SelectItem>
+                <SelectItem value="easy">{t("ug_difficulty_easy")}</SelectItem>
+                <SelectItem value="medium">
+                  {t("ug_difficulty_medium")}
+                </SelectItem>
+                <SelectItem value="hard">{t("ug_difficulty_hard")}</SelectItem>
               </SelectContent>
             </Select>
           </div>
           <div className="space-y-1 w-40">
-            <Label>Soru Sayısı</Label>
+            <Label>{t("ug_questionCount")}</Label>
             <Input
               type="number"
               min={1}
@@ -115,7 +120,7 @@ export function UploadAndGenerate() {
         </div>
         {documentId && (
           <p className="text-xs text-muted-foreground">
-            Yüklendi: {documentId}
+            {t("ug_uploadedPrefix")} {documentId}
           </p>
         )}
       </CardContent>
@@ -128,10 +133,10 @@ export function UploadAndGenerate() {
         >
           {uploading ? (
             <>
-              <Spinner size={16} className="mr-2" /> Yükleniyor...
+              <Spinner size={16} className="mr-2" /> {t("ug_uploading")}
             </>
           ) : (
-            "Yükle"
+            t("ug_upload")
           )}
         </Button>
         <Button
@@ -143,10 +148,10 @@ export function UploadAndGenerate() {
         >
           {generating ? (
             <>
-              <Spinner size={16} className="mr-2" /> Oluşturuluyor...
+              <Spinner size={16} className="mr-2" /> {t("ug_generating")}
             </>
           ) : (
-            "Soruları Oluştur"
+            t("ug_generate")
           )}
         </Button>
       </CardFooter>

@@ -6,9 +6,12 @@ import { useAuth } from "@/components/providers/auth-provider";
 import { UploadAndGenerate } from "@/components/dashboard/upload-and-generate";
 import { QuestionSetList } from "@/components/dashboard/question-set-list";
 import { Button } from "@/components/ui/button";
+import { useLang } from "@/components/providers/lang-provider";
+import { LanguageSwitcher } from "@/components/ui/language-switcher";
 
 export default function Home() {
   const { user, loading, logout } = useAuth();
+  const { t } = useLang();
 
   if (loading) {
     return (
@@ -29,13 +32,14 @@ export default function Home() {
   return (
     <div className="min-h-screen flex flex-col">
       <header className="border-b px-6 h-14 flex items-center justify-between bg-background/80 backdrop-blur">
-        <h1 className="font-semibold">Interview Question Creator</h1>
+        <h1 className="font-semibold">{t("appTitle")}</h1>
         <div className="flex items-center gap-3 text-sm">
           <span className="hidden sm:inline text-muted-foreground">
             {user.email}
           </span>
+          <LanguageSwitcher />
           <Button variant="outline" size="sm" onClick={logout}>
-            Çıkış
+            {t("logout")}
           </Button>
         </div>
       </header>
@@ -46,12 +50,8 @@ export default function Home() {
         </div>
         <aside className="space-y-4">
           <div className="p-4 rounded border text-sm text-muted-foreground">
-            <p className="font-medium mb-1">Not</p>
-            <p>
-              Vercel üzerinde kalıcı dosya depolama için harici bir object
-              storage (S3 vb.) yapılandırılmalıdır. Şu anki demo local disk
-              kullanır.
-            </p>
+            <p className="font-medium mb-1">{t("noteTitle")}</p>
+            <p>{t("noteBody")}</p>
           </div>
         </aside>
       </main>

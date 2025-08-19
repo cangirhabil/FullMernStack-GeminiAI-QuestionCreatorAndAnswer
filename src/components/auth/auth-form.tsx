@@ -11,6 +11,7 @@ import {
   CardContent,
   CardFooter,
 } from "@/components/ui/card";
+import { useLang } from "@/components/providers/lang-provider";
 import { Label } from "@/components/ui/label";
 
 export function AuthForm() {
@@ -20,6 +21,7 @@ export function AuthForm() {
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const { t } = useLang();
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -39,14 +41,14 @@ export function AuthForm() {
     <Card className="w-full max-w-md">
       <CardHeader>
         <CardTitle className="text-center text-xl font-semibold">
-          {mode === "login" ? "Giriş Yap" : "Kayıt Ol"}
+          {mode === "login" ? t("auth_loginTitle") : t("auth_registerTitle")}
         </CardTitle>
       </CardHeader>
       <form onSubmit={onSubmit}>
         <CardContent className="space-y-4">
           {mode === "register" && (
             <div className="space-y-1">
-              <Label htmlFor="name">İsim</Label>
+              <Label htmlFor="name">{t("auth_name")}</Label>
               <Input
                 id="name"
                 value={name}
@@ -56,7 +58,7 @@ export function AuthForm() {
             </div>
           )}
           <div className="space-y-1">
-            <Label htmlFor="email">Email</Label>
+            <Label htmlFor="email">{t("auth_email")}</Label>
             <Input
               id="email"
               type="email"
@@ -66,7 +68,7 @@ export function AuthForm() {
             />
           </div>
           <div className="space-y-1">
-            <Label htmlFor="password">Şifre</Label>
+            <Label htmlFor="password">{t("auth_password")}</Label>
             <Input
               id="password"
               type="password"
@@ -80,10 +82,10 @@ export function AuthForm() {
         <CardFooter className="flex flex-col gap-4">
           <Button type="submit" disabled={submitting} className="w-full">
             {submitting
-              ? "Gönderiliyor..."
+              ? t("auth_submitting")
               : mode === "login"
-              ? "Giriş Yap"
-              : "Kayıt Ol"}
+              ? t("auth_login")
+              : t("auth_register")}
           </Button>
           <Button
             type="button"
@@ -92,8 +94,8 @@ export function AuthForm() {
             onClick={() => setMode(mode === "login" ? "register" : "login")}
           >
             {mode === "login"
-              ? "Hesabın yok mu? Kayıt ol"
-              : "Hesabın var mı? Giriş yap"}
+              ? t("auth_noAccountRegister")
+              : t("auth_haveAccountLogin")}
           </Button>
         </CardFooter>
       </form>
