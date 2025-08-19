@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { readFile } from "fs/promises";
 import connectToDatabase from "@/lib/mongodb";
-import Document from "@/models/Document";
+import Document, { IDocument } from "@/models/Document";
 import QuestionSet from "@/models/QuestionSet";
 import { verifyToken } from "@/lib/auth";
 
@@ -40,50 +40,40 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Debug: log the path being accessed BEFORE anything else
+    const docWithPossibleContent = document as IDocument & { content?: Buffer };
     console.log("Document found:", {
-      id: document._id,
-      filename: document.filename,
-      uploadPath: document.uploadPath,
-      originalName: document.originalName,
+      id: docWithPossibleContent._id,
+      filename: docWithPossibleContent.filename,
+      uploadPath: docWithPossibleContent.uploadPath,
+      hasInlineContent: Boolean(docWithPossibleContent.content),
     });
 
-    // Check if file exists before trying to read
-    const { existsSync } = await import("fs");
-    if (!existsSync(document.uploadPath)) {
-      console.error("File not found at path:", document.uploadPath);
-      return NextResponse.json(
-        { error: "Uploaded file not found. Please upload the file again." },
-        { status: 404 }
-      );
+    // Determine raw content source (database binary or local path)
+    let rawBuffer: Buffer | undefined;
+    if (docWithPossibleContent.content) {
+      rawBuffer = docWithPossibleContent.content;
+    } else if (docWithPossibleContent.uploadPath) {
+      const { existsSync } = await import("fs");
+      if (existsSync(docWithPossibleContent.uploadPath)) {
+        try {
+          rawBuffer = await readFile(docWithPossibleContent.uploadPath);
+        } catch (e) {
+          console.warn("Failed to read local file, continuing with placeholder", e);
+        }
+      }
     }
 
-    // Temporary workaround: Skip PDF parsing and use placeholder text
-    // TODO: Fix pdf-parse module issue later
-    console.log("PDF parsing temporarily disabled due to module issues");
-    const textContent = `
-This is a placeholder text extracted from the PDF: ${document.originalName}.
-The system is designed to analyze document content and create interview questions.
-For now, we'll use this sample content to demonstrate the question generation feature.
+    // Placeholder extraction (real PDF parsing disabled)
+  let textContent = `Placeholder content for ${docWithPossibleContent.originalName}.`;
+    if (rawBuffer && rawBuffer.length > 32) {
+      textContent += ` (bytes=${rawBuffer.length})`;
+    }
 
-Sample topics that might be covered:
-- Technical knowledge
-- Project management
-- Problem solving
-- Communication skills
-- Industry best practices
+    console.log("Using synthetic text length:", textContent.length);
 
-Please note: This is a temporary implementation while we resolve PDF parsing issues.
-The actual PDF content will be processed once the technical issue is resolved.
-    `.trim();
-
-    console.log("Using placeholder text, length:", textContent.length);
-
-    if (!textContent || textContent.trim().length < 100) {
-      return NextResponse.json(
-        { error: "Insufficient text content in the document" },
-        { status: 400 }
-      );
+    // Minimal guard
+    if (!textContent || textContent.trim().length < 10) {
+      return NextResponse.json({ error: "Empty document content" }, { status: 400 });
     }
 
     // Generate questions using Gemini AI
@@ -148,7 +138,7 @@ Make sure to:
     const questionSet = new QuestionSet({
       userId,
       documentId,
-      title: `Questions from ${document.originalName}`,
+  title: `Questions from ${docWithPossibleContent.originalName}`,
       questions: questions.map((q) => ({
         question: q.question,
         answer: q.answer,

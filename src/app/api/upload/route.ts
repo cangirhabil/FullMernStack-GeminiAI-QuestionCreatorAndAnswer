@@ -1,10 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
-import { writeFile, mkdir } from "fs/promises";
 import { join } from "path";
-import { existsSync } from "fs";
 import connectToDatabase from "@/lib/mongodb";
 import Document from "@/models/Document";
 import { verifyToken } from "@/lib/auth";
+import { getStorageStrategy, saveLocalFile } from "@/lib/storage";
+import { existsSync } from "fs"; // only used while legacy local path code remains
+// removed direct fs writeFile/mkdir usage in favor of storage helper
 
 export async function POST(request: NextRequest) {
   try {
@@ -38,25 +39,18 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const bytes = await file.arrayBuffer();
-    const buffer = Buffer.from(bytes);
-
-    // Create uploads directory if it doesn't exist
-    const uploadsDir = join(process.cwd(), "uploads");
-    if (!existsSync(uploadsDir)) {
-      await mkdir(uploadsDir, { recursive: true });
-    }
-
-    // Generate unique filename
+    const bytes = Buffer.from(await file.arrayBuffer());
     const timestamp = Date.now();
-    const filename = `${timestamp}-${file.name.replace(
-      /[^a-zA-Z0-9.-]/g,
-      "_"
-    )}`;
-    const filepath = join(uploadsDir, filename);
+    const filename = `${timestamp}-${file.name.replace(/[^a-zA-Z0-9.-]/g, "_")}`;
 
-    // Save file
-    await writeFile(filepath, buffer);
+    const strategy = getStorageStrategy();
+    let uploadPath: string | undefined;
+    let content: Buffer | undefined;
+    if (strategy === "local") {
+      uploadPath = await saveLocalFile(filename, bytes);
+    } else {
+      content = bytes; // store binary in DB
+    }
 
     await connectToDatabase();
 
@@ -67,7 +61,8 @@ export async function POST(request: NextRequest) {
       originalName: file.name,
       mimeType: file.type,
       size: file.size,
-      uploadPath: filepath,
+      uploadPath,
+      content,
       status: "processing",
     });
 
@@ -77,6 +72,7 @@ export async function POST(request: NextRequest) {
       message: "File uploaded successfully",
       documentId: document._id,
       filename: document.filename,
+      storage: strategy,
     });
   } catch (error) {
     console.error("Upload error:", error);

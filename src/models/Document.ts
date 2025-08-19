@@ -6,7 +6,8 @@ export interface IDocument extends Document {
   originalName: string;
   mimeType: string;
   size: number;
-  uploadPath: string;
+  uploadPath?: string; // optional when using database storage
+  content?: Buffer; // binary content when STORAGE_STRATEGY=database
   status: "processing" | "completed" | "failed";
   createdAt: Date;
   updatedAt: Date;
@@ -37,7 +38,12 @@ const DocumentSchema = new Schema<IDocument>(
     },
     uploadPath: {
       type: String,
-      required: true,
+      required: false,
+    },
+    content: {
+      type: Buffer,
+      required: false,
+      select: false,
     },
     status: {
       type: String,
